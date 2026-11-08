@@ -1,0 +1,23 @@
+====================================================
+  FINDIT — Folder Gambar Demo
+====================================================
+
+Letakkan 3 file foto di folder ini dengan nama persis:
+
+  1. ktm.jpg       → Foto KTM & Kartu Flazz milik Ahmad Rizky
+  2. kunci.jpg     → Foto Kunci Motor Honda Vario 160 + Smart Key
+  3. tumbler.jpg   → Foto Tumbler Corkcicle Sage Green
+
+Format yang didukung: .jpg / .jpeg / .png (rename ke .jpg)
+
+----------------------------------------------------
+CARA PAKAI:
+1. Salin foto kamu ke folder ini dengan nama di atas
+2. Buka index.html di browser
+3. Gambar langsung muncul secara otomatis ✅
+
+Kalau gambar belum muncul setelah refresh:
+→ Buka DevTools (F12) → Application → Local Storage
+→ Hapus key "findit_items" → Refresh halaman
+
+====================================================

@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Findit - Pusat Laporan Kehilangan & Temuan Kampus</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Remix Icon CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ==================== NAVBAR ==================== -->
+  <header class="navbar">
+    <div class="container navbar-inner">
+      <!-- Brand Logo -->
+      <a href="#" class="brand" id="navBrandLogo">
+        <div class="brand-icon">
+          <i class="ri-search-eye-line"></i>
+        </div>
+        <div class="brand-info">
+          <div class="brand-name">Find<span>it</span>.</div>
+          <div class="brand-sub">Campus Lost &amp; Found</div>
+        </div>
+      </a>
+
+      <!-- Navigation Links -->
+      <nav>
+        <ul class="nav-menu" id="navMenu">
+          <li><a href="#" class="nav-link active" id="navLinkHome"><i class="ri-compass-3-line"></i> Jelajahi</a></li>
+          <li id="navMyReportsItem" style="display: none;">
+            <a href="#" class="nav-link" id="navLinkMyReports">
+              <i class="ri-file-list-3-line"></i> Laporan Saya 
+              <span class="tab-badge" id="myReportsCountBadge">0</span>
+            </a>
+          </li>
+          <li><a href="#panduanAman" class="nav-link" id="navLinkGuide"><i class="ri-shield-check-line"></i> Panduan Aman</a></li>
+        </ul>
+      </nav>
+
+      <!-- Action Buttons & Auth State -->
+      <div class="nav-actions">
+        <!-- Guest View (Not Logged In) -->
+        <div id="guestActions" style="display: flex; gap: 0.5rem; align-items: center;">
+          <button class="btn btn-outline btn-sm" id="btnOpenLogin">
+            <i class="ri-login-box-line"></i> Masuk
+          </button>
+          <button class="btn btn-primary btn-sm" id="btnOpenRegister">
+            Daftar Akun
+          </button>
+        </div>
+
+        <!-- Logged In User View -->
+        <div id="userActions" style="display: none; align-items: center; gap: 0.75rem;">
+          <button class="btn btn-primary btn-sm" id="btnOpenCreateReport">
+            <i class="ri-add-circle-line"></i> + Buat Laporan
+          </button>
+
+          <!-- User Menu Dropdown -->
+          <div class="user-menu-wrapper">
+            <button class="user-profile-btn" id="btnUserDropdown" aria-label="Menu Pengguna">
+              <img src="" alt="Avatar" class="user-avatar-mini" id="navUserAvatar">
+              <span class="user-name-mini" id="navUserName">Mahasiswa</span>
+              <i class="ri-arrow-down-s-line" style="font-size: 0.9rem; color: var(--slate-500);"></i>
+            </button>
+
+            <div class="user-dropdown" id="userDropdownMenu">
+              <div class="dropdown-header">
+                <div class="dropdown-name" id="dropdownUserName">-</div>
+                <div class="dropdown-nim" id="dropdownUserNim">-</div>
+              </div>
+              <a href="#" class="dropdown-item" id="menuMyReports">
+                <i class="ri-file-list-3-line"></i> Laporan Saya
+              </a>
+              <a href="#" class="dropdown-item" id="menuProfile">
+                <i class="ri-user-settings-line"></i> Profil Saya
+              </a>
+              <div style="border-top: 1px solid var(--slate-100); margin: 0.35rem 0;"></div>
+              <button class="dropdown-item text-danger" id="btnLogout" style="width: 100%; text-align: left;">
+                <i class="ri-logout-box-r-line"></i> Keluar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-nav-toggle" id="mobileNavToggle" aria-label="Toggle Navigation">
+          <i class="ri-menu-4-line"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== HERO SECTION ==================== -->
+  <section class="hero-section" id="heroSection">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-pill">
+          <span class="live-dot"></span>
+          <span>Portal Kehilangan &amp; Temuan Kampus Terpadu</span>
+        </div>
+        <h1 class="hero-title">
+          Kehilangan Barang di Area Kampus? <br>
+          Cari &amp; Laporkan di <span>Findit.</span>
+        </h1>
+        <p class="hero-description">
+          Platform kolaboratif mahasiswa dan civitas akademika untuk melacak, mengamankan, dan mengembalikan barang hilang secara transparan, cepat, dan terverifikasi.
+        </p>
+      </div>
+
+      <!-- Quick Search Bar Card -->
+      <div class="hero-search-card">
+        <form id="heroSearchForm" class="search-form">
+          <!-- Keyword -->
+          <div class="search-field">
+            <i class="ri-search-line search-field-icon"></i>
+            <input 
+              type="text" 
+              id="searchKeyword" 
+              class="search-input" 
+              placeholder="Cari barang (cth: KTM, AirPods, Kunci Motor, Tas...)" 
+              autocomplete="off"
+            >
+          </div>
+
+          <!-- Kategori -->
+          <div class="search-field">
+            <i class="ri-price-tag-3-line search-field-icon"></i>
+            <select id="searchCategory" class="search-select">
+              <option value="">Semua Kategori</option>
+              <option value="Elektronik">Elektronik</option>
+              <option value="Dokumen & Kartu">Dokumen &amp; Kartu</option>
+              <option value="Kunci & Aksesoris">Kunci &amp; Aksesoris</option>
+              <option value="Tas & Dompet">Tas &amp; Dompet</option>
+              <option value="Barang Pribadi">Barang Pribadi</option>
+              <option value="Pakaian">Pakaian</option>
+              <option value="Lainnya">Lainnya</option>
+            </select>
+          </div>
+
+          <!-- Lokasi Kampus -->
+          <div class="search-field">
+            <i class="ri-map-pin-line search-field-icon"></i>
+            <select id="searchLocation" class="search-select">
+              <option value="">Semua Lokasi Kampus</option>
+              <option value="Perpustakaan">Perpustakaan Pusat</option>
+              <option value="Kantin">Kantin Utama / Kantin Fakultas</option>
+              <option value="Fakultas Teknik">Fakultas Teknik</option>
+              <option value="Fasilkom">Fakultas Ilmu Komputer</option>
+              <option value="FEB">Fakultas Ekonomi &amp; Bisnis</option>
+              <option value="Gedung Kuliah Bersama">Gedung Kuliah Bersama (GKB)</option>
+              <option value="Laboratorium">Laboratorium Komputer / Sains</option>
+              <option value="Parkir">Area Parkiran Motor / Mobil</option>
+              <option value="Musholla">Musholla / Masjid Kampus</option>
+              <option value="Rektorat">Gedung Rektorat</option>
+            </select>
+          </div>
+
+          <!-- Tombol Cari -->
+          <button type="submit" class="btn btn-primary btn-search">
+            <i class="ri-search-line"></i> Cari Barang
+          </button>
+        </form>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="hero-stats">
+        <div class="stat-item">
+          <i class="ri-file-search-line"></i>
+          <span><strong id="statTotalReports">0</strong> Laporan Terdaftar</span>
+        </div>
+        <div class="stat-item">
+          <i class="ri-checkbox-circle-line" style="color: var(--found-color);"></i>
+          <span><strong id="statResolvedReports">0</strong> Berhasil Dikembalikan</span>
+        </div>
+        <div class="stat-item">
+          <i class="ri-radar-line" style="color: var(--lost-color);"></i>
+          <span><strong id="statActiveReports">0</strong> Kasus Sedang Dicari</span>
+        </div>
+        <div class="stat-item">
+          <i class="ri-shield-user-line" style="color: var(--primary);"></i>
+          <span>Verifikasi Kepemilikan Aman</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== MAIN CONTENT ==================== -->
+  <main class="main-section">
+    <div class="container">
+
+      <!-- ================= VIEW 1: JELAJAHI / KATALOG BARANG ================= -->
+      <div id="viewExplore">
+        <!-- Filter Tabs & Sort Header -->
+        <div class="filter-wrapper">
+          <!-- Type Tabs -->
+          <div class="filter-tabs">
+            <button class="tab-btn active" data-type="all">
+              <i class="ri-grid-line"></i> Semua Laporan
+              <span class="tab-badge" id="badgeCountAll">0</span>
+            </button>
+            <button class="tab-btn" data-type="lost">
+              <i class="ri-error-warning-line" style="color: var(--lost-color);"></i> Kehilangan
+              <span class="tab-badge" id="badgeCountLost">0</span>
+            </button>
+            <button class="tab-btn" data-type="found">
+              <i class="ri-checkbox-circle-line" style="color: var(--found-color);"></i> Ditemukan
+              <span class="tab-badge" id="badgeCountFound">0</span>
+            </button>
+            <button class="tab-btn" data-type="resolved">
+              <i class="ri-check-double-line"></i> Selesai
+              <span class="tab-badge" id="badgeCountResolved">0</span>
+            </button>
+          </div>
+
+          <!-- Sort Dropdown & Action -->
+          <div class="filter-actions">
+            <select id="sortOrder" class="sort-select">
+              <option value="newest">Waktu: Paling Baru</option>
+              <option value="oldest">Waktu: Paling Lama</option>
+              <option value="views">Paling Banyak Dilihat</option>
+            </select>
+            <button class="btn btn-outline btn-sm" id="btnFastReportModal">
+              <i class="ri-add-line"></i> Lapor Barang
+            </button>
+          </div>
+        </div>
+
+        <!-- Category Horizontal Quick Filter Chips -->
+        <div class="category-chips-row" id="categoryChips">
+          <button class="category-chip active" data-cat="">Semua Kategori</button>
+          <button class="category-chip" data-cat="Elektronik"><i class="ri-macbook-line"></i> Elektronik</button>
+          <button class="category-chip" data-cat="Dokumen & Kartu"><i class="ri-id-card-line"></i> Dokumen &amp; Kartu</button>
+          <button class="category-chip" data-cat="Kunci & Aksesoris"><i class="ri-key-2-line"></i> Kunci &amp; Aksesoris</button>
+          <button class="category-chip" data-cat="Tas & Dompet"><i class="ri-wallet-3-line"></i> Tas &amp; Dompet</button>
+          <button class="category-chip" data-cat="Barang Pribadi"><i class="ri-cup-line"></i> Barang Pribadi</button>
+          <button class="category-chip" data-cat="Pakaian"><i class="ri-t-shirt-line"></i> Pakaian</button>
+          <button class="category-chip" data-cat="Lainnya"><i class="ri-more-line"></i> Lainnya</button>
+        </div>
+
+        <!-- Result Status & Reset -->
+        <div class="result-status-bar">
+          <div>
+            Menampilkan <strong id="currentItemsCount">0</strong> laporan barang di kampus
+          </div>
+          <button id="btnResetFilters" class="btn-reset-filters" style="display: none;">
+            <i class="ri-restart-line"></i> Reset Filter Pencarian
+          </button>
+        </div>
+
+        <!-- Item Cards Grid -->
+        <div class="items-grid" id="itemsGrid">
+          <!-- Dynamic Content Rendered by JavaScript -->
+        </div>
+      </div>
+
+      <!-- ================= VIEW 2: LAPORAN SAYA (USER DASHBOARD) ================= -->
+      <div id="viewMyReports" style="display: none;">
+        <div class="view-header">
+          <div class="view-title-group">
+            <h2>Laporan Saya</h2>
+            <p>Kelola laporan kehilangan atau temuan barang yang pernah Anda buat.</p>
+          </div>
+          <div style="display: flex; gap: 0.75rem;">
+            <button class="btn btn-outline btn-sm" id="btnBackToExplore">
+              <i class="ri-arrow-left-line"></i> Kembali ke Jelajahi
+            </button>
+            <button class="btn btn-primary btn-sm" id="btnMyReportsCreate">
+              <i class="ri-add-line"></i> Buat Laporan Baru
+            </button>
+          </div>
+        </div>
+
+        <!-- Grid of User's items -->
+        <div class="items-grid" id="myItemsGrid">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ==================== SAFETY GUIDELINES ==================== -->
+  <section class="safety-section" id="panduanAman">
+    <div class="container">
+      <div class="safety-header">
+        <h2>Panduan Aman Serah Terima di Kampus</h2>
+        <p>Gunakan tata cara berikut untuk memastikan keamanan dan keabsahan pemilik saat melakukan klaim barang.</p>
+      </div>
+
+      <div class="safety-grid">
+        <div class="safety-card">
+          <div class="safety-icon">
+            <i class="ri-building-line"></i>
+          </div>
+          <h3>Pilih Lokasi Publik Kampus</h3>
+          <p>Selalu lakukan serah terima di area ramai seperti Pos Satpam Rektorat, Meja Resepsionis Perpustakaan, atau Lobi Fakultas pada jam perkuliahan.</p>
+        </div>
+
+        <div class="safety-card">
+          <div class="safety-icon">
+            <i class="ri-fingerprint-line"></i>
+          </div>
+          <h3>Verifikasi Bukti Unik</h3>
+          <p>Minta pemilik membuktikan hal unik yang tidak tertera di foto umum, misalnya: wallpaper HP, nomor seri, isi khusus di dalam dompet, atau foto KTM asli.</p>
+        </div>
+
+        <div class="safety-card">
+          <div class="safety-icon">
+            <i class="ri-shield-check-line"></i>
+          </div>
+          <h3>Titipkan ke Petugas Resmi</h3>
+          <p>Jika dalam 2x24 jam belum ada yang mengklaim barang temuan bernilai tinggi, titipkan langsung ke Pos Keamanan (Satpam) terdekat dan perbarui status laporan.</p>
+        </div>
+
+        <div class="safety-card">
+          <div class="safety-icon">
+            <i class="ri-gift-line"></i>
+          </div>
+          <h3>Hadiah &amp; Bentuk Apresiasi</h3>
+          <p>Imbalan adalah bentuk sukarela dari pelapor kehilangan. Jangan pernah meminta tebusan sebelum barang diserahkan dan diverifikasi secara langsung.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="brand">
+            <div class="brand-icon">
+              <i class="ri-search-eye-line"></i>
+            </div>
+            <div class="brand-info">
+              <div class="brand-name">Find<span>it</span>.</div>
+              <div class="brand-sub" style="color: var(--slate-400);">Campus Lost &amp; Found</div>
+            </div>
+          </div>
+          <p class="footer-desc">
+            Platform web terpadu pencarian barang hilang dan barang temuan di lingkungan universitas. Membantu civitas akademika saling terkoneksi dan menjaga integritas kampus.
+          </p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Navigasi Cepat</h4>
+          <ul class="footer-links">
+            <li><a href="#" id="footerLinkHome">Jelajahi Semua Barang</a></li>
+            <li><a href="#" id="footerLinkLost">Daftar Kehilangan</a></li>
+            <li><a href="#" id="footerLinkFound">Daftar Temuan</a></li>
+            <li><a href="#panduanAman">Panduan Serah Terima</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Informasi Proyek</h4>
+          <p style="font-size: 0.85rem; line-height: 1.6; margin-bottom: 0.85rem;">
+            Dibuat untuk keperluan Tugas Kuliah Pemrograman Web &amp; UI/UX. Dikembangkan dengan HTML5 semantic, Modern CSS, dan Vanilla JavaScript.
+          </p>
+          <div style="font-size: 0.8rem; color: var(--slate-400);">
+            <i class="ri-code-box-line"></i> Status: <strong>Prototipe Terintegrasi (LocalStorage)</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>
+          &copy; 2026 <strong>Findit</strong> &mdash; Dibuat dengan teliti untuk kenyamanan mahasiswa kampus.
+        </div>
+        <div>
+          Desain responsif &amp; Fungsionalitas Mandiri (Tanpa Dependensi Rumit).
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==========================================================================
+       MODALS
+       ========================================================================== -->
+
+  <!-- 1. AUTH MODAL (LOGIN & REGISTER) -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title" id="authModalTitle">
+          <i class="ri-user-line" style="color: var(--primary);"></i> Masuk ke Akun
+        </div>
+        <button class="modal-close" id="btnCloseAuthModal" aria-label="Tutup Modal">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Tab Switcher -->
+        <div class="auth-nav-tabs">
+          <button class="auth-tab-btn active" id="tabBtnLogin">Masuk (Login)</button>
+          <button class="auth-tab-btn" id="tabBtnRegister">Daftar Akun Baru</button>
+        </div>
+
+        <!-- FORM LOGIN -->
+        <form id="formLogin">
+          <div class="form-group">
+            <label class="form-label" for="loginIdentifier">Email Kampus atau NIM <span class="required">*</span></label>
+            <input 
+              type="text" 
+              id="loginIdentifier" 
+              class="form-control" 
+              placeholder="cth: ahmad.rizky@mahasiswa.ac.id atau 2108561001" 
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="loginPassword">Kata Sandi (Password) <span class="required">*</span></label>
+            <div class="password-field-wrapper">
+              <input 
+                type="password" 
+                id="loginPassword" 
+                class="form-control" 
+                placeholder="Masukkan password Anda" 
+                required
+              >
+              <button type="button" class="btn-toggle-password" data-target="loginPassword" aria-label="Lihat kata sandi" title="Lihat/Sembunyikan Kata Sandi">
+                <i class="ri-eye-line"></i>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
+            <i class="ri-login-box-line"></i> Masuk Sekarang
+          </button>
+
+          <!-- Akun Demo untuk Kemudahan Pengujian Dosen/Mahasiswa -->
+          <div class="demo-accounts-card">
+            <h5><i class="ri-lightbulb-line" style="color: var(--accent-amber);"></i> Akun Demo untuk Pengujian Cepat:</h5>
+            <p style="margin-bottom: 0.4rem;">Klik salah satu akun di bawah untuk auto-fill:</p>
+            <div>
+              <span class="demo-account-pill" data-email="ahmad.rizky@mahasiswa.ac.id" data-pass="password123">
+                👤 Ahmad (Fasilkom)
+              </span>
+              <span class="demo-account-pill" data-email="nabila.putri@mahasiswa.ac.id" data-pass="password123">
+                👤 Nabila (FEB)
+              </span>
+              <span class="demo-account-pill" data-email="fajar.satria@mahasiswa.ac.id" data-pass="password123">
+                👤 Fajar (Teknik)
+              </span>
+            </div>
+          </div>
+        </form>
+
+        <!-- FORM REGISTER -->
+        <form id="formRegister" style="display: none;">
+          <div class="form-group">
+            <label class="form-label" for="regName">Nama Lengkap Mahasiswa <span class="required">*</span></label>
+            <input 
+              type="text" 
+              id="regName" 
+              class="form-control" 
+              placeholder="cth: Muhammad Budi Santoso" 
+              required
+            >
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="regNim">NIM (Nomor Induk Mahasiswa) <span class="required">*</span></label>
+              <input 
+                type="text" 
+                id="regNim" 
+                class="form-control" 
+                placeholder="cth: 2108561088" 
+                required
+              >
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="regFaculty">Fakultas / Program Studi <span class="required">*</span></label>
+              <input 
+                type="text" 
+                id="regFaculty" 
+                class="form-control" 
+                placeholder="cth: Fasilkom / Teknik" 
+                required
+              >
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="regEmail">Email Aktif <span class="required">*</span></label>
+              <input 
+                type="email" 
+                id="regEmail" 
+                class="form-control" 
+                placeholder="budi@mahasiswa.ac.id" 
+                required
+              >
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="regPhone">No. WhatsApp Aktif <span class="required">*</span></label>
+              <input 
+                type="tel" 
+                id="regPhone" 
+                class="form-control" 
+                placeholder="cth: 08123456789" 
+                required
+              >
+              <div class="form-hint">Digunakan saat pemilik barang menghubungi Anda.</div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="regPassword">Kata Sandi (Password / PIN) <span class="required">*</span></label>
+              <div class="password-field-wrapper">
+                <input 
+                  type="password" 
+                  id="regPassword" 
+                  class="form-control" 
+                  placeholder="Minimal 6 karakter" 
+                  minlength="6" 
+                  required
+                >
+                <button type="button" class="btn-toggle-password" data-target="regPassword" aria-label="Lihat kata sandi" title="Lihat/Sembunyikan Kata Sandi">
+                  <i class="ri-eye-line"></i>
+                </button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="regConfirmPassword">Ulangi Sandi / PIN <span class="required">*</span></label>
+              <div class="password-field-wrapper">
+                <input 
+                  type="password" 
+                  id="regConfirmPassword" 
+                  class="form-control" 
+                  placeholder="Ketik ulang sandi" 
+                  minlength="6" 
+                  required
+                >
+                <button type="button" class="btn-toggle-password" data-target="regConfirmPassword" aria-label="Lihat kata sandi" title="Lihat/Sembunyikan Kata Sandi">
+                  <i class="ri-eye-line"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">
+            <i class="ri-user-add-line"></i> Daftarkan Akun Saya
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. MODAL LAPOR BARANG (CREATE / EDIT REPORT) -->
+  <div class="modal-overlay" id="reportModal">
+    <div class="modal-box modal-box-lg">
+      <div class="modal-header">
+        <div class="modal-title" id="reportModalTitle">
+          <i class="ri-add-box-line" style="color: var(--primary);"></i> Buat Laporan Barang
+        </div>
+        <button class="modal-close" id="btnCloseReportModal" aria-label="Tutup Modal">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <form id="formReport">
+          <!-- Tipe Laporan Toggle -->
+          <label class="form-label">Jenis Laporan <span class="required">*</span></label>
+          <div class="type-toggle-group">
+            <button type="button" class="type-toggle-btn active lost" id="btnToggleLost">
+              <i class="ri-alert-line"></i>
+              <strong>SAYA KEHILANGAN BARANG</strong>
+              <small>Barang milik saya hilang di area kampus</small>
+            </button>
+            <button type="button" class="type-toggle-btn found" id="btnToggleFound">
+              <i class="ri-hand-heart-line"></i>
+              <strong>SAYA MENEMUKAN BARANG</strong>
+              <small>Saya menemukan barang milik orang lain</small>
+            </button>
+          </div>
+          <input type="hidden" id="reportType" value="lost">
+
+          <!-- Judul Barang -->
+          <div class="form-group">
+            <label class="form-label" for="reportTitle">Nama / Judul Barang <span class="required">*</span></label>
+            <input 
+              type="text" 
+              id="reportTitle" 
+              class="form-control" 
+              placeholder="Contoh: Kunci Honda Beat dengan Gantungan Doraemon, Dompet Hitam Merk Sophie Martin..." 
+              required
+            >
+          </div>
+
+          <!-- Kategori & Lokasi -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="reportCategory">Kategori Barang <span class="required">*</span></label>
+              <select id="reportCategory" class="form-control" required>
+                <option value="">-- Pilih Kategori --</option>
+                <option value="Elektronik">Elektronik (Laptop, HP, Earphone, dsb.)</option>
+                <option value="Dokumen & Kartu">Dokumen &amp; Kartu (KTM, KTP, SIM, dsb.)</option>
+                <option value="Kunci & Aksesoris">Kunci &amp; Aksesoris Kendaraan / Kamar</option>
+                <option value="Tas & Dompet">Tas, Ransel &amp; Dompet</option>
+                <option value="Barang Pribadi">Barang Pribadi (Tumbler, Kacamata, Buku)</option>
+                <option value="Pakaian">Pakaian (Jaket, Sepatu, Helm)</option>
+                <option value="Lainnya">Lainnya</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="reportLocation">Lokasi Kejadian / Ditemukan <span class="required">*</span></label>
+              <input 
+                type="text" 
+                id="reportLocation" 
+                class="form-control" 
+                placeholder="Contoh: Perpustakaan Lt. 2 Meja 12, Parkiran Gedung C" 
+                required
+              >
+            </div>
+          </div>
+
+          <!-- Tanggal & Waktu -->
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="reportDate">Tanggal Kejadian <span class="required">*</span></label>
+              <input type="date" id="reportDate" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="reportTime">Perkiraan Jam</label>
+              <input type="time" id="reportTime" class="form-control">
+            </div>
+          </div>
+
+          <!-- Deskripsi & Ciri Khusus -->
+          <div class="form-group">
+            <label class="form-label" for="reportDesc">Deskripsi &amp; Kronologi Singkat <span class="required">*</span></label>
+            <textarea 
+              id="reportDesc" 
+              class="form-control" 
+              placeholder="Ceritakan perkiraan kronologi kejadian atau kondisi saat barang ditemukan..." 
+              rows="3" 
+              required
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reportFeatures">Ciri-Ciri Khusus / Keterangan Unik <span class="required">*</span></label>
+            <textarea 
+              id="reportFeatures" 
+              class="form-control" 
+              placeholder="Contoh: Ada stiker kucing di pojok kanan, gantungan berkarat sedikit, goresan di layar..." 
+              rows="2" 
+              required
+            ></textarea>
+            <div class="form-hint">Digunakan untuk mencocokkan verifikasi dengan orang yang melakukan klaim.</div>
+          </div>
+
+          <!-- Imbalan (Opsional) -->
+          <div class="form-group" id="groupReward">
+            <label class="form-label" for="reportReward">Imbalan / Ucapan Terima Kasih (Opsional)</label>
+            <input 
+              type="text" 
+              id="reportReward" 
+              class="form-control" 
+              placeholder="Contoh: Imbalan Rp 50.000 / Traktiran makan siang"
+            >
+          </div>
+
+          <!-- Upload Foto Barang -->
+          <div class="form-group">
+            <label class="form-label">Foto Barang (Opsional tapi Sangat Dianjurkan)</label>
+            <div class="image-upload-zone" id="dropZone">
+              <i class="ri-image-add-line" style="font-size: 2rem; color: var(--slate-400);"></i>
+              <p style="font-size: 0.88rem; font-weight: 600; color: var(--slate-700); margin-top: 0.4rem;">
+                Klik atau seret foto ke sini untuk mengunggah
+              </p>
+              <p style="font-size: 0.75rem; color: var(--slate-500);">Format JPG, PNG atau WebP (Maksimal 3MB)</p>
+              <input type="file" id="reportImageInput" accept="image/*" style="display: none;">
+              <img id="imagePreview" class="image-upload-preview" alt="Preview Foto">
+              <button type="button" class="btn btn-outline btn-sm" id="btnRemoveImage" style="display: none; margin: 0.5rem auto 0;">
+                <i class="ri-delete-bin-line"></i> Hapus Foto
+              </button>
+            </div>
+          </div>
+
+          <!-- Kontak WhatsApp -->
+          <div class="form-group">
+            <label class="form-label" for="reportPhone">Nomor WhatsApp Pelapor <span class="required">*</span></label>
+            <input 
+              type="tel" 
+              id="reportPhone" 
+              class="form-control" 
+              placeholder="Contoh: 08123456789" 
+              required
+            >
+            <div class="form-hint">Nomor ini akan digunakan oleh penemu atau pemilik sah untuk menghubungi Anda via WhatsApp.</div>
+          </div>
+
+          <!-- Submit Buttons -->
+          <div class="modal-footer" style="padding-left: 0; padding-right: 0; background: transparent;">
+            <button type="button" class="btn btn-outline" id="btnCancelReport">Batal</button>
+            <button type="submit" class="btn btn-primary" id="btnSubmitReport">
+              <i class="ri-send-plane-fill"></i> Terbitkan Laporan
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. MODAL DETAIL BARANG (DETAIL & CONTACT) -->
+  <div class="modal-overlay" id="detailModal">
+    <div class="modal-box modal-box-lg">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span id="detailBadgeStatus" class="badge-status badge-lost">KEHILANGAN</span>
+          <span id="detailItemHeaderTitle" style="font-size: 1.05rem; margin-left: 0.5rem; color: var(--slate-800);">Detail Barang</span>
+        </div>
+        <button class="modal-close" id="btnCloseDetailModal" aria-label="Tutup">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="detail-layout">
+          <!-- Gambar Barang -->
+          <div class="detail-img-wrap">
+            <img id="detailImage" src="" alt="Foto Barang" class="detail-img">
+          </div>
+
+          <!-- Informasi Lengkap -->
+          <div class="detail-info-wrap">
+            <h2 id="detailTitle" style="font-size: 1.35rem; font-weight: 800; color: var(--slate-900); line-height: 1.3; margin-bottom: 0.5rem;">
+              -
+            </h2>
+
+            <div id="detailRewardBanner" style="display: none; background: var(--accent-amber-bg); border: 1px solid #fde68a; padding: 0.5rem 0.75rem; border-radius: var(--radius-md); font-size: 0.84rem; color: var(--accent-amber); font-weight: 700; margin-bottom: 0.85rem;">
+              <i class="ri-gift-line"></i> <span id="detailRewardText">Imbalan disediakan</span>
+            </div>
+
+            <p id="detailDesc" style="font-size: 0.9rem; color: var(--slate-600); line-height: 1.6; margin-bottom: 1rem;">
+              -
+            </p>
+
+            <table class="detail-meta-table">
+              <tr>
+                <td>Kategori</td>
+                <td id="detailCategory">-</td>
+              </tr>
+              <tr>
+                <td>Lokasi Terkait</td>
+                <td id="detailLocation">-</td>
+              </tr>
+              <tr>
+                <td>Tanggal Kejadian</td>
+                <td id="detailDate">-</td>
+              </tr>
+              <tr>
+                <td>Waktu Perkiraan</td>
+                <td id="detailTime">-</td>
+              </tr>
+              <tr>
+                <td>Ciri-Ciri Unik</td>
+                <td id="detailFeatures" style="color: var(--primary); font-weight: 600;">-</td>
+              </tr>
+              <tr>
+                <td>Status Kasus</td>
+                <td id="detailStatusText">-</td>
+              </tr>
+            </table>
+
+            <!-- Kartu Pelapor -->
+            <div class="reporter-card">
+              <img id="detailReporterAvatar" src="" alt="Pelapor" class="reporter-card-avatar">
+              <div style="flex: 1;">
+                <div style="font-size: 0.75rem; color: var(--slate-500); font-weight: 600;">DILAPORKAN OLEH</div>
+                <div id="detailReporterName" style="font-size: 0.95rem; font-weight: 700; color: var(--slate-900);">-</div>
+                <div id="detailReporterFaculty" style="font-size: 0.78rem; color: var(--slate-500);">-</div>
+              </div>
+            </div>
+
+            <!-- Tombol Interaksi -->
+            <div style="display: flex; flex-direction: column; gap: 0.65rem; margin-top: 1.25rem;">
+              <a href="#" target="_blank" class="btn btn-success" id="btnContactWA" style="text-decoration: none;">
+                <i class="ri-whatsapp-line" style="font-size: 1.15rem;"></i> Hubungi Pelapor via WhatsApp
+              </a>
+              <button class="btn btn-outline" id="btnOpenClaimModal">
+                <i class="ri-shield-user-line"></i> Ini Barang Saya (Ajukan Klaim)
+              </button>
+              
+              <!-- Fitur Ekstra: Bagikan & Cetak Surat Laporan -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.25rem;">
+                <button type="button" class="btn btn-outline btn-sm" id="btnShareItem">
+                  <i class="ri-share-forward-line"></i> Bagikan Info
+                </button>
+                <button type="button" class="btn btn-outline btn-sm" id="btnPrintItem">
+                  <i class="ri-printer-line"></i> Cetak Bukti Laporan
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. MODAL KLAIM BARANG (CLAIM VERIFICATION) -->
+  <div class="modal-overlay" id="claimModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="ri-shield-check-line" style="color: var(--found-color);"></i> Verifikasi Klaim Kepemilikan
+        </div>
+        <button class="modal-close" id="btnCloseClaimModal" aria-label="Tutup">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <p style="font-size: 0.88rem; color: var(--slate-600); margin-bottom: 1.25rem;">
+          Untuk menjaga keamanan, mohon berikan deskripsi detail yang membuktikan bahwa Anda adalah pemilik sah dari barang ini.
+        </p>
+
+        <form id="formClaim">
+          <input type="hidden" id="claimItemId" value="">
+
+          <div class="form-group">
+            <label class="form-label" for="claimName">Nama Pengklaim <span class="required">*</span></label>
+            <input type="text" id="claimName" class="form-control" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="claimNim">NIM Mahasiswa <span class="required">*</span></label>
+            <input type="text" id="claimNim" class="form-control" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="claimPhone">No. WhatsApp yang Bisa Dihubungi <span class="required">*</span></label>
+            <input type="tel" id="claimPhone" class="form-control" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="claimProof">Bukti / Ciri Rahasia Kepemilikan <span class="required">*</span></label>
+            <textarea 
+              id="claimProof" 
+              class="form-control" 
+              rows="3" 
+              placeholder="Contoh: Wallpaper HP bergambar kucing oren, di dalam dompet ada struk minimarket tanggal 5, ada nomor seri di bodi belakang..." 
+              required
+            ></textarea>
+            <div class="form-hint">Hindari ciri umum yang terlihat langsung dari foto laporan.</div>
+          </div>
+
+          <div class="modal-footer" style="padding-left: 0; padding-right: 0; background: transparent;">
+            <button type="button" class="btn btn-outline" id="btnCancelClaim">Batal</button>
+            <button type="submit" class="btn btn-primary">
+              <i class="ri-check-line"></i> Kirim Pengajuan Klaim
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4.5. MODAL DAFTAR KLAIM MASUK (UNIK UNTUK PEMILIK LAPORAN) -->
+  <div class="modal-overlay" id="claimsListModal">
+    <div class="modal-box modal-box-lg">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="ri-user-search-line" style="color: var(--primary);"></i> Daftar Pengajuan Klaim Masuk
+        </div>
+        <button class="modal-close" id="btnCloseClaimsListModal" aria-label="Tutup">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <p style="font-size: 0.88rem; color: var(--slate-600); margin-bottom: 1rem;">
+          Berikut adalah mahasiswa yang mengajukan klaim atas barang temuan Anda. Periksa kesesuaian bukti rahasia yang mereka berikan sebelum menyerahkan barang.
+        </p>
+        <div id="claimsListContainer" style="display: flex; flex-direction: column; gap: 1rem;">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. MODAL PROFIL MAHASISWA -->
+  <div class="modal-overlay" id="profileModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="ri-user-settings-line" style="color: var(--primary);"></i> Profil Mahasiswa
+        </div>
+        <button class="modal-close" id="btnCloseProfileModal" aria-label="Tutup">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div style="text-align: center; margin-bottom: 1.5rem;">
+          <img id="profileAvatarImg" src="" alt="Avatar" style="width: 72px; height: 72px; border-radius: var(--radius-full); margin: 0 auto 0.75rem; border: 2px solid var(--primary-border);">
+          <h3 id="profileHeaderName" style="font-size: 1.15rem; font-weight: 800; color: var(--slate-900);">-</h3>
+          <p id="profileHeaderEmail" style="font-size: 0.82rem; color: var(--slate-500);">-</p>
+        </div>
+
+        <form id="formUpdateProfile">
+          <div class="form-group">
+            <label class="form-label" for="profileName">Nama Lengkap</label>
+            <input type="text" id="profileName" class="form-control" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="profileNim">NIM (Nomor Induk Mahasiswa)</label>
+              <input type="text" id="profileNim" class="form-control" readonly style="background-color: var(--slate-100); cursor: not-allowed;">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="profileFaculty">Fakultas</label>
+              <input type="text" id="profileFaculty" class="form-control" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="profilePhone">No. WhatsApp</label>
+            <input type="tel" id="profilePhone" class="form-control" required>
+          </div>
+
+          <div class="modal-footer" style="padding-left: 0; padding-right: 0; background: transparent;">
+            <button type="submit" class="btn btn-primary" style="width: 100%;">
+              <i class="ri-save-line"></i> Simpan Perubahan Profil
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TOAST NOTIFICATION CONTAINER ==================== -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- JavaScript Files -->
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
+
