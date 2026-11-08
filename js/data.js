@@ -119,7 +119,7 @@ const INITIAL_ITEMS = [
     reporterId: "usr-01",
     reporterName: "Ahmad Rizky Pratama",
     reporterFaculty: "Fasilkom",
-    reporterPhone: "081310214043",
+    reporterPhone: "081234567890",
     createdAt: new Date(Date.now() - 18 * 60 * 60 * 1000).toISOString(),
     views: 64,
     claims: []
@@ -197,11 +197,12 @@ function migrateLocalImages() {
       image: "assets/images/KTM.JPG",
       title: "KTM atas nama Muhammad Thoriq Bintang Pamungkas",
       reporterName: "Muhammad Thoriq Bintang Pamungkas",
+      reporterPhone: "081310214043",
       description: "Tertinggal di meja kubikal dekat jendela area barat. Dompet kartu warna hitam transparan, berisi KTM atas nama Muhammad Thoriq Bintang Pamungkas dan kartu perpustakaan.",
       specificFeatures: "Goresan tipis di sudut kanan bawah KTM."
     },
     "item-103": { image: "assets/images/kunci motor.jpg" },
-    "item-104": { image: "assets/images/tumbler.jpg" }
+    "item-104": { image: "assets/images/tumbler.jpg", reporterPhone: "081234567890" }
   };
 
   const raw = localStorage.getItem("findit_items");

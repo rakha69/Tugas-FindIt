@@ -12,7 +12,7 @@
   --primary-subtle: #f5f7ff;
   --primary-border: #c7d2fe;
 
-  /* State Colors - Vivid & High Contrast (Non-AI, Authentic Product Tone) */
+  /* State Colors - Vivid & High Contrast */
   --lost-color: #e11d48;
   --lost-hover: #be123c;
   --lost-bg: #fff1f2;
@@ -621,7 +621,7 @@ a:hover {
 
 .search-form {
   display: grid;
-  grid-template-columns: 2fr 1.25fr 1.25fr auto;
+  grid-template-columns: 2fr 1.5fr auto;
   gap: 0.85rem;
   align-items: center;
 }
@@ -694,6 +694,15 @@ a:hover {
   gap: 1.25rem;
   margin-top: 2.25rem;
   flex-wrap: wrap;
+  position: relative;
+  z-index: 2;
+}
+
+/* Hero CTA Button */
+.hero-cta {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-start;
   position: relative;
   z-index: 2;
 }
@@ -2012,6 +2021,36 @@ textarea.form-control {
 
   .filter-actions {
     justify-content: space-between;
+  }
+}
+
+/* ==========================================================================
+   SMALL MOBILE (Max 480px) - Fix navbar overflow & hamburger cutoff
+   ========================================================================== */
+@media (max-width: 480px) {
+  .nav-actions {
+    gap: 0.4rem;
+  }
+
+  #guestActions {
+    gap: 0.35rem;
+  }
+
+  #guestActions .btn {
+    padding: 0.4rem 0.65rem;
+    font-size: 0.8rem;
+  }
+
+  .user-name-mini {
+    display: none;
+  }
+
+  .brand-sub {
+    display: none;
+  }
+
+  .navbar-inner {
+    gap: 0.5rem;
   }
 }
 

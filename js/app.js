@@ -279,9 +279,9 @@ document.addEventListener("DOMContentLoaded", () => {
     badgeCountFound.textContent = foundCount;
     badgeCountResolved.textContent = resolvedCount;
 
-    statTotalReports.textContent = allCount;
-    statResolvedReports.textContent = resolvedCount;
-    statActiveReports.textContent = lostCount + foundCount;
+    if (statTotalReports) statTotalReports.textContent = allCount;
+    if (statResolvedReports) statResolvedReports.textContent = resolvedCount;
+    if (statActiveReports) statActiveReports.textContent = lostCount + foundCount;
   }
 
   function renderItems() {
@@ -399,9 +399,14 @@ document.addEventListener("DOMContentLoaded", () => {
       item.image ||
       "https://images.unsplash.com/photo-1584438784894-089d6a62b8fa?auto=format&fit=crop&w=600&q=80";
 
-    const timeAgo = formatRelativeTime(item.createdAt);
+    const incidentDate = item.date
+      ? new Date(item.date + "T00:00:00").toLocaleDateString("id-ID", {
+          day: "numeric",
+          month: "short",
+          year: "numeric"
+        })
+      : "Tanggal tidak tertera";
 
-    // Dynamic category icons and color classes (eliminates visual monotony)
     const catIcons = {
       "Elektronik": "ri-macbook-line",
       "Dokumen & Kartu": "ri-id-card-line",
@@ -438,7 +443,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <span class="item-category-tag ${tagClass}">
               <i class="${iconClass}"></i> ${escapeHTML(item.category)}
             </span>
-            <span><i class="ri-time-line"></i> ${timeAgo}</span>
+            <span><i class="ri-calendar-line"></i> ${incidentDate}</span>
           </div>
 
           <h3 class="item-card-title">${escapeHTML(item.title)}</h3>
@@ -449,10 +454,11 @@ document.addEventListener("DOMContentLoaded", () => {
               <i class="ri-map-pin-line"></i>
               <span>${escapeHTML(item.location)}</span>
             </div>
-            <div class="detail-line">
-              <i class="ri-calendar-line"></i>
-              <span>${item.date} ${item.time ? "• " + item.time : ""}</span>
-            </div>
+            ${
+              item.time
+                ? `<div class="detail-line"><i class="ri-time-line"></i><span>Pukul ${item.time} WIB</span></div>`
+                : ""
+            }
           </div>
 
           ${
@@ -606,17 +612,12 @@ document.addEventListener("DOMContentLoaded", () => {
   // =========================================================================
   const heroSearchForm = document.getElementById("heroSearchForm");
   const searchKeyword = document.getElementById("searchKeyword");
-  const searchCategory = document.getElementById("searchCategory");
   const searchLocation = document.getElementById("searchLocation");
 
   heroSearchForm.addEventListener("submit", (e) => {
     e.preventDefault();
     currentFilters.keyword = searchKeyword.value.trim();
-    currentFilters.category = searchCategory.value;
     currentFilters.location = searchLocation.value;
-
-    // Sinkronkan Category Chips jika kategori dipilih di dropdown
-    syncCategoryChips(currentFilters.category);
 
     switchToExploreView();
     renderItems();
@@ -638,7 +639,6 @@ document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll(".category-chip").forEach((c) => c.classList.remove("active"));
       chip.classList.add("active");
       currentFilters.category = chip.dataset.cat;
-      searchCategory.value = chip.dataset.cat;
       renderItems();
     });
   });
@@ -670,7 +670,6 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     searchKeyword.value = "";
-    searchCategory.value = "";
     searchLocation.value = "";
     document.getElementById("sortOrder").value = "newest";
 
@@ -736,6 +735,9 @@ document.addEventListener("DOMContentLoaded", () => {
       detailBadgeStatus.className = "badge-status badge-found";
       detailBadgeStatus.innerHTML = `<i class="ri-search-eye-line"></i> BARANG DITEMUKAN`;
     }
+    // Pastikan badge di body modal tidak absolute
+    detailBadgeStatus.style.position = "static";
+    detailBadgeStatus.style.marginBottom = "0.6rem";
 
     document.getElementById("detailItemHeaderTitle").textContent = item.category;
     document.getElementById("detailTitle").textContent = item.title;
@@ -746,7 +748,17 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("detailTime").textContent = item.time || "Tidak disebutkan";
     document.getElementById("detailFeatures").textContent = item.specificFeatures || "Tidak ada ciri khusus terdaftar";
     document.getElementById("detailStatusText").textContent =
-      item.status === "resolved" ? "Kasus Ditutup (Barang sudah diserahkan)" : "Masih Aktif Dicari";
+      item.status === "resolved"
+        ? "Kasus Selesai (Barang sudah diserahkan)"
+        : item.type === "found"
+          ? "Menunggu Pemilik"
+          : "Masih Dicari";
+
+    // Sembunyikan ciri-ciri unik untuk barang DITEMUKAN (privasi — hanya untuk verifikasi klaim)
+    const rowDetailFeatures = document.getElementById("rowDetailFeatures");
+    if (rowDetailFeatures) {
+      rowDetailFeatures.style.display = item.type === "found" && item.status !== "resolved" ? "none" : "table-row";
+    }
 
     // Reward Banner
     const detailRewardBanner = document.getElementById("detailRewardBanner");
@@ -997,7 +1009,22 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   document.getElementById("btnOpenCreateReport").addEventListener("click", openReportModal);
-  document.getElementById("btnFastReportModal").addEventListener("click", openReportModal);
+  const btnFastReport = document.getElementById("btnFastReportModal");
+  if (btnFastReport) btnFastReport.addEventListener("click", openReportModal);
+
+  // Hero "Laporkan Barang" CTA button
+  const btnHeroReport = document.getElementById("btnHeroReport");
+  if (btnHeroReport) {
+    btnHeroReport.addEventListener("click", () => {
+      if (!Auth.isLoggedIn()) {
+        openAuthModal("login");
+        showToast("Login Dulu", "Silakan masuk terlebih dahulu untuk membuat laporan.", "info");
+        return;
+      }
+      openReportModal();
+    });
+  }
+
   const btnMyReportsCreate = document.getElementById("btnMyReportsCreate");
   if (btnMyReportsCreate) {
     btnMyReportsCreate.addEventListener("click", openReportModal);

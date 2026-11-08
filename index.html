@@ -119,6 +119,11 @@
           Platform kolaboratif mahasiswa dan civitas akademika untuk melacak, mengamankan, dan mengembalikan barang
           hilang secara transparan, cepat, dan terverifikasi.
         </p>
+        <div class="hero-cta">
+          <button class="btn btn-primary btn-lg" id="btnHeroReport">
+            <i class="ri-add-circle-line"></i> Laporkan Barang Sekarang
+          </button>
+        </div>
       </div>
 
       <!-- Quick Search Bar Card -->
@@ -129,21 +134,6 @@
             <i class="ri-search-line search-field-icon"></i>
             <input type="text" id="searchKeyword" class="search-input"
               placeholder="Cari barang (cth: KTM, AirPods, Kunci Motor, Tas...)" autocomplete="off">
-          </div>
-
-          <!-- Kategori -->
-          <div class="search-field">
-            <i class="ri-price-tag-3-line search-field-icon"></i>
-            <select id="searchCategory" class="search-select">
-              <option value="">Semua Kategori</option>
-              <option value="Elektronik">Elektronik</option>
-              <option value="Dokumen & Kartu">Dokumen &amp; Kartu</option>
-              <option value="Kunci & Aksesoris">Kunci &amp; Aksesoris</option>
-              <option value="Tas & Dompet">Tas &amp; Dompet</option>
-              <option value="Barang Pribadi">Barang Pribadi</option>
-              <option value="Pakaian">Pakaian</option>
-              <option value="Lainnya">Lainnya</option>
-            </select>
           </div>
 
           <!-- Lokasi Kampus -->
@@ -171,25 +161,6 @@
         </form>
       </div>
 
-      <!-- Quick Stats -->
-      <div class="hero-stats">
-        <div class="stat-item">
-          <i class="ri-file-search-line"></i>
-          <span><strong id="statTotalReports">0</strong> Laporan Terdaftar</span>
-        </div>
-        <div class="stat-item">
-          <i class="ri-checkbox-circle-line" style="color: var(--found-color);"></i>
-          <span><strong id="statResolvedReports">0</strong> Berhasil Dikembalikan</span>
-        </div>
-        <div class="stat-item">
-          <i class="ri-radar-line" style="color: var(--lost-color);"></i>
-          <span><strong id="statActiveReports">0</strong> Kasus Sedang Dicari</span>
-        </div>
-        <div class="stat-item">
-          <i class="ri-shield-user-line" style="color: var(--primary);"></i>
-          <span>Verifikasi Kepemilikan Aman</span>
-        </div>
-      </div>
     </div>
   </section>
 
@@ -228,9 +199,6 @@
               <option value="oldest">Waktu: Paling Lama</option>
               <option value="views">Paling Banyak Dilihat</option>
             </select>
-            <button class="btn btn-outline btn-sm" id="btnFastReportModal">
-              <i class="ri-add-line"></i> Lapor Barang
-            </button>
           </div>
         </div>
 
@@ -360,16 +328,6 @@
         </div>
 
         <div class="footer-col">
-          <h4>Navigasi Cepat</h4>
-          <ul class="footer-links">
-            <li><a href="#" id="footerLinkHome">Jelajahi Semua Barang</a></li>
-            <li><a href="#" id="footerLinkLost">Daftar Kehilangan</a></li>
-            <li><a href="#" id="footerLinkFound">Daftar Temuan</a></li>
-            <li><a href="#panduanAman">Panduan Serah Terima</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-col">
           <h4>Informasi Proyek</h4>
           <p style="font-size: 0.85rem; line-height: 1.6; margin-bottom: 0.85rem;">
             Dibuat untuk keperluan Tugas Kuliah Pemrograman Web &amp; UI/UX. Dikembangkan dengan HTML5 semantic, Modern
@@ -380,6 +338,11 @@
           </div>
         </div>
       </div>
+
+      <!-- Hidden navigation links for JS compatibility -->
+      <a href="#" id="footerLinkHome" style="display:none;"></a>
+      <a href="#" id="footerLinkLost" style="display:none;"></a>
+      <a href="#" id="footerLinkFound" style="display:none;"></a>
 
       <div class="footer-bottom">
         <div>
@@ -663,9 +626,8 @@
     <div class="modal-box modal-box-lg">
       <div class="modal-header">
         <div class="modal-title">
-          <span id="detailBadgeStatus" class="badge-status badge-lost">KEHILANGAN</span>
-          <span id="detailItemHeaderTitle"
-            style="font-size: 1.05rem; margin-left: 0.5rem; color: var(--slate-800);">Detail Barang</span>
+          <i class="ri-search-eye-line" style="color: var(--primary);"></i>
+          <span id="detailItemHeaderTitle" style="font-size: 1.05rem; margin-left: 0.5rem; color: var(--slate-800);">Detail Barang</span>
         </div>
         <button class="modal-close" id="btnCloseDetailModal" aria-label="Tutup">&times;</button>
       </div>
@@ -679,6 +641,7 @@
 
           <!-- Informasi Lengkap -->
           <div class="detail-info-wrap">
+            <span id="detailBadgeStatus" class="badge-status badge-lost" style="display: inline-flex; position: static; margin-bottom: 0.6rem;">KEHILANGAN</span>
             <h2 id="detailTitle"
               style="font-size: 1.35rem; font-weight: 800; color: var(--slate-900); line-height: 1.3; margin-bottom: 0.5rem;">
               -
@@ -711,7 +674,7 @@
                 <td>Waktu Perkiraan</td>
                 <td id="detailTime">-</td>
               </tr>
-              <tr>
+              <tr id="rowDetailFeatures">
                 <td>Ciri-Ciri Unik</td>
                 <td id="detailFeatures" style="color: var(--primary); font-weight: 600;">-</td>
               </tr>
@@ -734,22 +697,12 @@
 
             <!-- Tombol Interaksi -->
             <div style="display: flex; flex-direction: column; gap: 0.65rem; margin-top: 1.25rem;">
-              <a href="#" target="_blank" class="btn btn-success" id="btnContactWA" style="text-decoration: none;">
-                <i class="ri-whatsapp-line" style="font-size: 1.15rem;"></i> Hubungi Pelapor via WhatsApp
-              </a>
-              <button class="btn btn-outline" id="btnOpenClaimModal">
+              <button class="btn btn-primary" id="btnOpenClaimModal">
                 <i class="ri-shield-user-line"></i> Ini Barang Saya (Ajukan Klaim)
               </button>
-
-              <!-- Fitur Ekstra: Bagikan & Cetak Surat Laporan -->
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 0.25rem;">
-                <button type="button" class="btn btn-outline btn-sm" id="btnShareItem">
-                  <i class="ri-share-forward-line"></i> Bagikan Info
-                </button>
-                <button type="button" class="btn btn-outline btn-sm" id="btnPrintItem">
-                  <i class="ri-printer-line"></i> Cetak Bukti Laporan
-                </button>
-              </div>
+              <a href="#" target="_blank" class="btn btn-outline btn-sm" id="btnContactWA" style="text-decoration: none; color: #059669; border-color: #a7f3d0;">
+                <i class="ri-whatsapp-line" style="font-size: 1.1rem;"></i> Hubungi Pelapor via WhatsApp
+              </a>
             </div>
           </div>
         </div>
