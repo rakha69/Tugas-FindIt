@@ -1,128 +1,142 @@
-# 🔍 Findit - Campus Lost & Found Platform
+# Findit — Platform Barang Hilang & Temuan Kampus
 
-**Findit** adalah aplikasi web pusat pelaporan dan pencarian barang hilang maupun barang temuan di lingkungan kampus universitas. Proyek ini dikembangkan secara murni menggunakan **HTML5, CSS3, dan Vanilla JavaScript** tanpa ketergantungan framework berat, sehingga sangat ringan, cepat, dan mudah diuji langsung oleh dosen maupun mahasiswa.
+Pernah nggak ketinggalan KTM di perpustakaan, atau nemu AirPods di kantin tapi bingung mau lapor ke mana? Nah, **Findit** hadir buat ngesolve masalah itu.
 
----
+Findit adalah platform digital berbasis web yang dibuat khusus untuk lingkungan kampus, biar mahasiswa bisa **melaporkan barang yang hilang** atau **mengumumkan barang temuan** dengan mudah — dan yang kehilangan bisa langsung menemukan info itu tanpa harus nyebarin pesan ke grup kelas satu per satu.
 
-## ✨ Fitur-Fitur Utama
-
-### 1. 🔐 Sistem Autentikasi Lengkap & Saling Terkoneksi
-- **Pendaftaran Akun Baru (Register):**
-  - Input Nama Lengkap Mahasiswa, NIM, Fakultas/Prodi, Email Kampus/Pribadi, No. WhatsApp aktif, dan Kata Sandi / PIN.
-  - **Fitur Mata (Show/Hide Password):** Tombol interaktif untuk melihat dan menyembunyikan input kata sandi/PIN agar mahasiswa dapat memastikan kebenaran pengetikan sebelum mendaftar.
-  - Validasi pencegahan duplikasi NIM dan Email.
-  - Pembuatan avatar inisial otomatis.
-- **Masuk Akun (Login):**
-  - Fleksibel: dapat login menggunakan **Email Kampus** maupun **NIM**.
-  - Dilengkapi juga dengan tombol mata (*Show/Hide Password*) dan fitur **1-Click Demo Accounts** (Ahmad - Fasilkom, Nabila - FEB, Fajar - Teknik) untuk mempermudah evaluasi dosen.
-- **Sesi Pengguna & Profil:**
-  - Status login tersinkronisasi via `localStorage`.
-  - Dropdown menu di navbar menampilkan nama panggilan, avatar, NIM, dan Fakultas.
-  - Modal **Profil Mahasiswa** untuk melihat dan memperbarui informasi kontak.
-
-### 2. 📝 Pembuatan Laporan Barang (Lost & Found Report)
-- Pilihan tipe laporan: **"Saya Kehilangan Barang" (Lost)** vs **"Saya Menemukan Barang" (Found)**.
-- Input detail lengkap:
-  - Judul / Nama Barang
-  - Kategori (Elektronik, Dokumen & Kartu, Kunci & Aksesoris, Tas & Dompet, Barang Pribadi, Pakaian, Lainnya)
-  - Lokasi Spesifik Kampus (Perpustakaan, Kantin, Gedung Kuliah, dsb.)
-  - Tanggal & Perkiraan Jam Kejadian
-  - Deskripsi & Kronologi Singkat
-  - **Ciri-Ciri Khusus / Keterangan Unik** (kunci verifikasi kepemilikan)
-  - Penawaran Imbalan / Ucapan Terima Kasih (khusus barang hilang)
-  - **Upload Foto Barang** dengan live preview dan konversi Base64 otomatis agar tersimpan persisten.
-  - Kontak WhatsApp pelapor (otomatis terisi dari profil pengguna yang login).
-
-### 3. 🔎 Eksplorasi & Filter Multi-Kriteria
-- **Live Search Bar:** Pencarian instan berdasarkan nama barang, ciri khusus, deskripsi, atau lokasi.
-- **Tab Filter Tipe:**
-  - *Semua Laporan*
-  - *🔴 Kehilangan*
-  - *🟢 Ditemukan*
-  - *✅ Selesai / Dikembalikan*
-- **Filter Kategori (Quick Chips):** Tombol chip horizontal untuk memilih kategori barang dalam 1 klik.
-- **Filter Lokasi Kampus:** Dropdown lokasi spesifik di lingkungan universitas.
-- **Pengurutan (Sorting):** Waktu Paling Baru, Paling Lama, atau Laporan Paling Banyak Dilihat.
-- Tombol **Reset Filter** otomatis muncul saat ada filter yang aktif.
-
-### 4. 🛡️ Verifikasi Klaim Kepemilikan (Anti-Fraud System)
-- Fitur realistis untuk lingkungan kampus: mencegah orang sembarangan mengaku sebagai pemilik barang berharga.
-- Pengaju klaim wajib mengisi formulir bukti rahasia (contoh: wallpaper lockscreen HP, nomor seri tersembunyi, isi kartu di dalam dompet).
-- Tombol langsung terhubung ke **WhatsApp Web/App** pelapor dengan pesan otomatis terformat rapi.
-
-### 5. 📊 Dashboard "Laporan Saya" (Manajemen Laporan Pengguna)
-- Halaman khusus pengguna login untuk mengelola laporan yang pernah dibuat:
-  - **Tandai Selesai / Kembali:** Mengubah status barang menjadi *Resolved* jika barang sudah diserahkan.
-  - **Hapus Laporan:** Menghapus laporan dari sistem jika tidak lagi diperlukan.
-  - **Lihat Detail:** Meninjau kembali data laporan.
-
-### 6. 🎨 Desain UI/UX Manusiawi (Human-Crafted, Non-AI Cliché, Tidak Monoton)
-- **Bukan visual klise AI:** Tidak ada gradasi gelap neon ungu/cyan futuristik yang melelahkan mata atau efek kaca blur yang tidak terbaca.
-- **Identitas Warna Tematik & Aksesibel:**
-  - *Electric Royal Indigo* (`#4338ca`) sebagai aksen utama akademis yang percaya diri dan modern.
-  - *Vivid Crimson Rose* (`#e11d48`) untuk status **Kehilangan** berdaya kontras tinggi.
-  - *Fresh Emerald Green* (`#059669`) untuk status **Ditemukan** yang menenangkan dan meyakinkan.
-  - *Warm Golden Amber* (`#d97706`) untuk penanda imbalan dan verifikasi bukti.
-- **Kategori Berwarna (Menghilangkan Monotoni):**
-  - Tiap kategori barang (Elektronik, Dokumen, Kunci, Tas, Barang Pribadi, Pakaian) memiliki aksen warna dan ikon tersendiri pada kartu katalog maupun chip filter.
-- **Kartu Panduan Edukatif Beraksen Warna:** Masing-masing dari 4 kartu panduan keselamatan kampus memiliki aksen visual khusus (Indigo, Violet, Emerald, dan Amber).
-- **Fitur Ekstra Siap Uji:**
-  - **Inspeksi Klaim Masuk:** Pemilik laporan dapat memeriksa daftar kandidat pengklaim barang, membaca bukti rahasianya, dan menyetujui penyerahan barang dalam 1 klik.
-  - **Cetak Bukti Laporan Resmi (Print Sheet):** Mengonversi laporan barang hilang menjadi surat resmi bertanda tangan petugas keamanan kampus dengan format cetak rapi.
-  - **Bagikan Info Laporan:** Menyalin ringkasan informasi barang siap kirim ke grup WhatsApp kelas atau fakultas.
-- **Animasi Halus & Responsivitas:** Notifikasi Toast yang interaktif, live pulsing dot status kampus, dan transisi hover tactile.
+Proyek ini dibuat murni pakai **HTML, CSS, dan JavaScript** — tanpa framework, tanpa backend, tanpa instalasi apapun. Langsung buka, langsung jalan.
 
 ---
 
-## 📁 Struktur Direktori
+## Fitur-Fitur
 
-```text
+### 🔐 Daftar & Masuk Akun
+
+Sebelum bisa bikin laporan, pengguna perlu daftar dulu. Proses registrasinya nggak ribet — cukup isi nama, NIM, fakultas, email, nomor WhatsApp, dan buat PIN/kata sandi.
+
+Beberapa hal yang diperhatikan di sini:
+- **Tombol mata (👁️)** di field kata sandi — biar bisa ngecek pengetikan PIN udah bener atau belum sebelum submit
+- **Validasi duplikasi** — NIM dan email yang sama nggak bisa didaftarkan dua kali
+- **Avatar otomatis** dari inisial nama, jadi nggak perlu upload foto profil
+
+Untuk login, bisa pakai **email** atau langsung pakai **NIM** — mana yang lebih hafal. Ada juga tombol mata di field password-nya.
+
+Sesi login tersimpan di browser, jadi nggak perlu login ulang setiap kali buka halaman. Kalau mau ganti info kontak, bisa langsung edit dari menu profil di navbar.
+
+---
+
+### 📝 Buat Laporan Barang
+
+Ini inti dari Findit. Tombol "Laporkan Barang" di halaman utama membuka form laporan yang bisa dipilih dua tipenya:
+
+- **Saya Kehilangan Barang** — kamu yang kehilangan dan lagi nyari
+- **Saya Menemukan Barang** — kamu nemu barang orang lain dan mau bantu kembaliin
+
+Yang bisa diisi di form:
+- Nama/judul barang
+- Kategori (Elektronik, Dokumen & Kartu, Kunci, Tas, Barang Pribadi, Pakaian, dll.)
+- Lokasi spesifik di kampus (Perpustakaan, Kantin, Parkiran, dll.)
+- Tanggal dan perkiraan jam kejadian
+- Deskripsi singkat kronologi atau kondisi barang
+- **Ciri-ciri khusus** — ini penting banget, berguna buat verifikasi kepemilikan nantinya
+- Tawaran imbalan (kalau kehilangan dan mau kasih reward)
+- **Upload foto barang** — langsung bisa preview sebelum submit
+
+Semua laporan tersimpan permanen di browser dan langsung muncul di halaman utama.
+
+---
+
+### 🔎 Cari & Filter Laporan
+
+Di halaman utama tersedia berbagai cara buat nyari laporan:
+
+- **Search bar** — ketik nama barang, ciri khusus, atau lokasi, hasilnya langsung muncul real-time
+- **Tab filter:** Semua / Kehilangan / Ditemukan / Selesai
+- **Chip kategori** — klik sekali buat filter per kategori (Elektronik, Dokumen, Kunci, dsb.)
+- **Dropdown lokasi** — filter berdasarkan lokasi spesifik di kampus
+- **Urutan tampilan** — bisa diurutkan dari yang terbaru, terlama, atau paling banyak dilihat
+- Tombol **Reset Filter** otomatis muncul kalau ada filter yang aktif
+
+---
+
+### 🛡️ Klaim Kepemilikan Barang
+
+Kalau nemu laporan yang kelihatannya milikmu, ada tombol "Ajukan Klaim". Di sini kamu diminta isi bukti rahasia — misalnya isi dompet, wallpaper HP, atau ciri khusus yang cuma pemilik asli yang tau.
+
+Ini sengaja dibuat supaya nggak sembarang orang bisa ngaku-ngaku. Setelah isi bukti, ada tombol langsung ke **WhatsApp** pelapor dengan pesan otomatis yang sudah terformat rapi.
+
+---
+
+### 📋 Kelola Laporan Sendiri
+
+Ada halaman khusus "Laporan Saya" buat ngecek dan ngurusin laporan yang pernah kamu buat:
+
+- **Lihat klaim masuk** — siapa aja yang sudah ngajukan klaim, berikut bukti rahasianya
+- **Setujui klaim** — kalau buktinya cocok, klik approve dan status barang otomatis jadi "Selesai"
+- **Tandai selesai manual** — kalau barang udah balik tapi lewat jalur lain
+- **Hapus laporan** — kalau laporan udah nggak relevan
+
+---
+
+### 🖨️ Cetak & Bagikan Laporan
+
+Di halaman detail setiap laporan, ada dua fitur tambahan:
+
+- **Cetak** — laporan bisa dicetak dalam format surat resmi lengkap dengan kolom tanda tangan petugas keamanan kampus (berguna kalau perlu laporan fisik ke satpam atau kemahasiswaan)
+- **Bagikan** — menyalin ringkasan info barang yang siap dikirim ke grup WhatsApp kelas atau angkatan
+
+---
+
+## Struktur Folder
+
+```
 findit/
-│
-├── index.html          # Struktur utama antarmuka (Navbar, Hero, Katalog, Modals, Footer)
+├── index.html              # Halaman utama (navbar, katalog, semua modal)
 ├── css/
-│   └── style.css       # Desain visual, CSS Grid/Flexbox, animasi, dan responsivitas
+│   └── style.css           # Semua styling, layout, animasi, dan responsivitas
 ├── js/
-│   ├── data.js         # Data dummy awal realistis kampus & inisialisasi LocalStorage
-│   ├── auth.js         # Logika autentikasi: register, login (Email/NIM), logout, session
-│   └── app.js          # Controller aplikasi: filter, render card, upload gambar, klaim, toast
-└── README.md           # Dokumentasi teknis proyek
+│   ├── data.js             # Data awal & inisialisasi localStorage
+│   ├── auth.js             # Login, register, logout, session pengguna
+│   └── app.js              # Logic utama: filter, render, klaim, toast, dll.
+├── assets/
+│   └── images/             # Foto barang untuk laporan demo
+└── README.md
 ```
 
 ---
 
-## 🚀 Cara Menjalankan Proyek
+## Cara Pakai
 
-Tidak diperlukan instalasi Node.js atau web server khusus! Anda dapat langsung menjalankannya dengan cara berikut:
+Nggak perlu install apa-apa. Cukup:
 
-1. **Buka Langsung di Browser:**
-   - Cukup klik dua kali (double click) file `index.html` di komputer Anda, atau
-   - Klik kanan file `index.html` -> pilih **Open With** -> **Google Chrome / Microsoft Edge / Firefox**.
+1. **Double click** file `index.html` — langsung buka di browser
+2. Atau klik kanan → **Open With** → pilih Chrome / Edge / Firefox
 
-2. **Menggunakan VS Code Live Server (Opsional):**
-   - Buka folder `findit` di Visual Studio Code.
-   - Klik kanan file `index.html` -> pilih **Open with Live Server**.
-   - Halaman akan otomatis terbuka di `http://127.0.0.1:5500`.
+Kalau pakai VS Code, bisa pakai ekstensi **Live Server** — klik kanan `index.html` → *Open with Live Server*.
 
 ---
 
-## 🔑 Akun Demo Pengujian Cepat
+## Akun Demo
 
-Untuk memudahkan dosen atau penguji mencoba semua fitur tanpa harus mendaftar terlebih dahulu:
+Buat langsung coba semua fitur tanpa daftar dulu, tersedia 3 akun demo:
 
-| Nama Mahasiswa | Email / NIM | Kata Sandi | Fakultas |
+| Nama | Email / NIM | Password | Fakultas |
 |---|---|---|---|
 | Ahmad Rizky Pratama | `ahmad.rizky@mahasiswa.ac.id` / `2108561001` | `password123` | Fasilkom |
 | Nabila Putri Cantika | `nabila.putri@mahasiswa.ac.id` / `2209102034` | `password123` | FEB |
 | Fajar Satria Yudha | `fajar.satria@mahasiswa.ac.id` / `2005013099` | `password123` | Teknik |
 
-*(Atau klik langsung chip akun demo di dalam modal login untuk pengisian otomatis).*
+Di halaman login juga ada tombol chip nama akun demo — klik langsung otomatis terisi, tinggal login.
 
 ---
 
-## 🎓 Catatan untuk Tugas Kuliah
-Proyek ini memenuhi standar penilaian:
-- **Clean Code & Modularitas:** Pemisahan file yang rapi antara data mock, autentikasi, dan manipulasi DOM.
-- **Penyimpanan Persisten:** Menggunakan Web Storage API (`localStorage`) sehingga data laporan baru, status barang, dan akun baru tidak hilang saat halaman di-refresh.
-- **Aksesibilitas & Keamanan:** Menyediakan panduan serah terima aman di kampus dan verifikasi bukti kepemilikan.
+## Catatan Teknis
 
+- Semua data (akun & laporan) disimpan di **localStorage** browser — persisten selama cache belum dihapus
+- Foto barang yang diupload disimpan dalam format **Base64** langsung di localStorage
+- Tidak ada server, tidak ada database eksternal, tidak ada koneksi internet yang dibutuhkan untuk menjalankan aplikasi ini
+- Dibuat untuk memenuhi tugas mata kuliah — murni HTML, CSS, dan Vanilla JavaScript
+
+---
+
+*Dibuat oleh Muhammad Thoriq Bintang Pamungkas*
