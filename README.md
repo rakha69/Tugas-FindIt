@@ -139,4 +139,4 @@ Di halaman login juga ada tombol chip nama akun demo — klik langsung otomatis 
 
 ---
 
-*Dibuat oleh Muhammad Thoriq Bintang Pamungkas*
+*Dibuat oleh Hafidz Muhammad Rakha Shidqi*
