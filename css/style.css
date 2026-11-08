@@ -702,7 +702,8 @@ a:hover {
 .hero-cta {
   margin-top: 1.5rem;
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
+  align-items: center;
   position: relative;
   z-index: 2;
 }
