@@ -56,7 +56,7 @@ const INITIAL_ITEMS = [
     reporterId: "usr-01",
     reporterName: "Muhammad Thoriq Bintang Pamungkas",
     reporterFaculty: "Fasilkom",
-    reporterPhone: "081234567890",
+    reporterPhone: "081310214043",
     createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 jam lalu
     views: 48,
     claims: []
@@ -119,7 +119,7 @@ const INITIAL_ITEMS = [
     reporterId: "usr-01",
     reporterName: "Ahmad Rizky Pratama",
     reporterFaculty: "Fasilkom",
-    reporterPhone: "081234567890",
+    reporterPhone: "081310214043",
     createdAt: new Date(Date.now() - 18 * 60 * 60 * 1000).toISOString(),
     views: 64,
     claims: []
