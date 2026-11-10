@@ -1,37 +1,60 @@
 /* ==========================================================================
-   FINDIT 2.0 - Apple Fluid UI & Campus Radar Design System
-   Palet: Warm Stone, Obsidian Ink, Forest Emerald, Terracotta Coral
+   FINDIT 2.0 - Opsi 2: "Tech & Radar" (Biru Institusi & Oranye Alert)
+   - Primary: Royal Blue & Navy Blue (Institusi, Kampus, Sistem Terpercaya)
+   - Secondary / Action Button: Vibrant Orange / Amber (Radar, Pencarian, Alert)
+   - Background: Putih Bersih (#ffffff / #f8fafc)
+   - Status Colors: Merah (Barang Hilang), Hijau (Barang Ditemukan)
    ========================================================================== */
 
 :root {
-  --bg-canvas: #f3f1ec;
+  /* Canvas & Surfaces (Putih Bersih) */
+  --bg-canvas: #f8fafc;
   --bg-elevated: #ffffff;
-  --bg-subtle: #ebe8e0;
-  --bg-glass: rgba(255, 255, 255, 0.78);
-  --bg-glass-dark: rgba(20, 20, 19, 0.88);
+  --bg-subtle: #f1f5f9;
+  --bg-glass: rgba(255, 255, 255, 0.88);
+  --bg-glass-dark: rgba(15, 23, 42, 0.92);
 
-  --ink-900: #141413;
-  --ink-800: #262523;
-  --ink-600: #575551;
-  --ink-400: #8c8982;
-  --ink-200: #dedad0;
-  --ink-100: #eae7df;
+  /* Typography Inks */
+  --ink-900: #0f172a;
+  --ink-800: #1e293b;
+  --ink-600: #475569;
+  --ink-400: #94a3b8;
+  --ink-200: #e2e8f0;
+  --ink-100: #f1f5f9;
 
-  --brand-emerald: #0d9488;
-  --brand-emerald-dark: #0f766e;
-  --brand-emerald-soft: #ccfbf1;
-  --brand-forest: #113e38;
+  /* Primary: Biru Institusi / Royal & Navy */
+  --brand-primary: #1d4ed8;
+  --brand-primary-hover: #1e40af;
+  --brand-navy: #0f172a;
+  --brand-navy-card: #0f172a;
+  --brand-blue-soft: #eff6ff;
+  --brand-blue-border: #bfdbfe;
 
-  --lost-coral: #e11d48;
-  --lost-coral-soft: #ffe4e6;
-  --found-jade: #059669;
-  --found-jade-soft: #d1fae5;
-  --amber-gold: #d97706;
-  --amber-soft: #fef3c7;
+  /* Secondary / Action Button: Vibrant Orange / Amber */
+  --action-orange: #ea580c;
+  --action-orange-vibrant: #f97316;
+  --action-orange-hover: #c2410c;
+  --action-orange-soft: #fff7ed;
+  --action-orange-border: #fed7aa;
+  --action-orange-glow: rgba(234, 88, 12, 0.28);
 
-  --border-hairline: rgba(20, 20, 19, 0.08);
-  --border-strong: rgba(20, 20, 19, 0.14);
+  /* Status Colors */
+  --lost-red: #dc2626;
+  --lost-red-soft: #fef2f2;
+  --lost-red-border: #fecaca;
 
+  --found-green: #16a34a;
+  --found-green-soft: #f0fdf4;
+  --found-green-border: #bbf7d0;
+
+  --resolved-slate: #475569;
+  --resolved-slate-soft: #f1f5f9;
+
+  /* Specular Hairline Borders */
+  --border-hairline: rgba(15, 23, 42, 0.08);
+  --border-strong: rgba(15, 23, 42, 0.14);
+
+  /* Radii */
   --radius-xs: 8px;
   --radius-sm: 12px;
   --radius-md: 18px;
@@ -39,9 +62,10 @@
   --radius-xl: 32px;
   --radius-pill: 9999px;
 
-  --shadow-ambient: 0 2px 10px -2px rgba(20, 20, 19, 0.05), 0 12px 32px -8px rgba(20, 20, 19, 0.06);
-  --shadow-float: 0 20px 50px -12px rgba(20, 20, 19, 0.14), 0 4px 16px -4px rgba(20, 20, 19, 0.06);
-  --shadow-sheet: -16px 0 60px rgba(20, 20, 19, 0.18);
+  /* Shadows */
+  --shadow-ambient: 0 1px 3px rgba(15, 23, 42, 0.04), 0 10px 28px -6px rgba(15, 23, 42, 0.06);
+  --shadow-float: 0 20px 45px -10px rgba(30, 64, 175, 0.12), 0 4px 16px -2px rgba(15, 23, 42, 0.05);
+  --shadow-sheet: -16px 0 60px rgba(15, 23, 42, 0.2);
 
   --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
 }
@@ -61,8 +85,8 @@ body {
   font-family: var(--font-sans);
   background-color: var(--bg-canvas);
   background-image:
-    radial-gradient(at 12% 8%, rgba(13, 148, 136, 0.08) 0px, transparent 45%),
-    radial-gradient(at 88% 12%, rgba(217, 119, 6, 0.07) 0px, transparent 45%);
+    radial-gradient(at 10% 8%, rgba(29, 78, 216, 0.05) 0px, transparent 40%),
+    radial-gradient(at 90% 12%, rgba(234, 88, 12, 0.05) 0px, transparent 40%);
   color: var(--ink-900);
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
@@ -90,7 +114,7 @@ button {
 }
 
 /* ==========================================================================
-   FLOATING APPLE DYNAMIC DOCK NAVBAR
+   FLOATING DYNAMIC DOCK NAVBAR (NAVY & ROYAL ACCENTS)
    ========================================================================== */
 .top-dock-wrapper {
   position: sticky;
@@ -106,8 +130,8 @@ button {
   background: var(--bg-glass);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.75);
-  box-shadow: 0 8px 32px rgba(20, 20, 19, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9);
   border-radius: var(--radius-pill);
   padding: 0.55rem 0.75rem 0.55rem 1.15rem;
   display: flex;
@@ -129,7 +153,7 @@ button {
   width: 38px;
   height: 38px;
   border-radius: 12px;
-  background: var(--ink-900);
+  background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
   color: #fff;
   display: flex;
   align-items: center;
@@ -137,6 +161,7 @@ button {
   font-size: 1.2rem;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
 }
 
 .brand-orb::after {
@@ -144,11 +169,11 @@ button {
   position: absolute;
   width: 14px;
   height: 14px;
-  background: var(--brand-emerald);
+  background: var(--action-orange-vibrant);
   border-radius: 50%;
   bottom: -4px;
   right: -4px;
-  filter: blur(4px);
+  filter: blur(3px);
 }
 
 .brand-title {
@@ -159,7 +184,7 @@ button {
 }
 
 .brand-title span {
-  color: var(--brand-emerald);
+  color: var(--brand-primary);
 }
 
 .brand-tag {
@@ -173,7 +198,7 @@ button {
 .dock-nav-pills {
   display: flex;
   align-items: center;
-  background: rgba(20, 20, 19, 0.045);
+  background: var(--bg-subtle);
   padding: 0.28rem;
   border-radius: var(--radius-pill);
   gap: 0.2rem;
@@ -194,7 +219,7 @@ button {
 }
 
 .dock-pill-btn.active {
-  color: var(--ink-900);
+  color: var(--brand-primary);
 }
 
 .dock-pill-bg {
@@ -202,7 +227,7 @@ button {
   inset: 0;
   background: var(--bg-elevated);
   border-radius: var(--radius-pill);
-  box-shadow: 0 2px 8px rgba(20, 20, 19, 0.08);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
   z-index: -1;
 }
 
@@ -211,7 +236,7 @@ button {
   font-weight: 800;
   padding: 0.1rem 0.45rem;
   border-radius: var(--radius-pill);
-  background: var(--brand-emerald);
+  background: var(--brand-primary);
   color: #fff;
 }
 
@@ -222,14 +247,14 @@ button {
 }
 
 /* ==========================================================================
-   BUTTONS (APPLE TACTILE PILLS)
+   BUTTONS (TECH & RADAR: BIRU INSTITUSI & VIBRANT ORANGE)
    ========================================================================== */
 .btn-apple {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.6rem 1.2rem;
+  padding: 0.6rem 1.25rem;
   border-radius: var(--radius-pill);
   font-size: 0.88rem;
   font-weight: 700;
@@ -242,42 +267,71 @@ button {
   transform: scale(0.96);
 }
 
-.btn-ink {
-  background: var(--ink-900);
+/* Secondary Action Button: Vibrant Orange / Amber (Radar Alert Action) */
+.btn-orange {
+  background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
   color: #ffffff;
-  box-shadow: 0 6px 18px rgba(20, 20, 19, 0.18);
+  box-shadow: 0 8px 24px var(--action-orange-glow);
 }
 
-.btn-ink:hover {
-  background: #292826;
+.btn-orange:hover {
+  background: linear-gradient(135deg, #c2410c 0%, #ea580c 100%);
+  box-shadow: 0 10px 28px rgba(234, 88, 12, 0.36);
   transform: translateY(-1px);
 }
 
-.btn-emerald {
-  background: linear-gradient(135deg, #0d9488 0%, #059669 100%);
+/* Primary Button: Royal Blue Institusi */
+.btn-blue {
+  background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
   color: #ffffff;
-  box-shadow: 0 8px 22px rgba(13, 148, 136, 0.28);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.28);
+}
+
+.btn-blue:hover {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
+  transform: translateY(-1px);
+}
+
+/* Backward compatibility aliases */
+.btn-emerald {
+  background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
+  color: #ffffff;
+  box-shadow: 0 8px 24px var(--action-orange-glow);
 }
 
 .btn-emerald:hover {
-  box-shadow: 0 12px 26px rgba(13, 148, 136, 0.36);
+  background: linear-gradient(135deg, #c2410c 0%, #ea580c 100%);
+  box-shadow: 0 10px 28px rgba(234, 88, 12, 0.36);
+  transform: translateY(-1px);
+}
+
+.btn-ink {
+  background: var(--brand-navy);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.16);
+}
+
+.btn-ink:hover {
+  background: #1e293b;
   transform: translateY(-1px);
 }
 
 .btn-glass {
-  background: rgba(255, 255, 255, 0.85);
-  color: var(--ink-900);
+  background: var(--bg-elevated);
+  color: var(--ink-800);
   border: 1px solid var(--border-strong);
 }
 
 .btn-glass:hover {
-  background: #ffffff;
+  background: var(--bg-subtle);
+  border-color: var(--brand-primary);
+  color: var(--brand-primary);
 }
 
 .btn-wa-outline {
   background: #f0fdf4;
-  color: #047857;
-  border: 1.5px solid #a7f3d0;
+  color: #15803d;
+  border: 1.5px solid #86efac;
 }
 
 .btn-wa-outline:hover {
@@ -285,22 +339,26 @@ button {
 }
 
 .btn-coral-soft {
-  background: var(--lost-coral-soft);
-  color: var(--lost-coral);
+  background: var(--lost-red-soft);
+  color: var(--lost-red);
+}
+
+.btn-coral-soft:hover {
+  background: #fee2e2;
 }
 
 .btn-sm {
-  padding: 0.45rem 0.9rem;
+  padding: 0.45rem 0.95rem;
   font-size: 0.8rem;
 }
 
 .btn-lg {
-  padding: 0.85rem 1.75rem;
-  font-size: 0.96rem;
+  padding: 0.88rem 1.85rem;
+  font-size: 0.98rem;
 }
 
 /* ==========================================================================
-   BENTO COMMAND CENTER (NON-MONOTONOUS HERO & CAMPUS RADAR)
+   BENTO COMMAND CENTER (CLEAN WHITE HERO & TECH NAVY RADAR CHECKLIST)
    ========================================================================== */
 .bento-command-grid {
   display: grid;
@@ -327,9 +385,9 @@ button {
   position: absolute;
   top: -80px;
   right: -80px;
-  width: 240px;
-  height: 240px;
-  background: radial-gradient(circle, rgba(13, 148, 136, 0.12) 0%, transparent 70%);
+  width: 260px;
+  height: 260px;
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.08) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -339,11 +397,11 @@ button {
   gap: 0.5rem;
   padding: 0.35rem 0.85rem;
   border-radius: var(--radius-pill);
-  background: var(--bg-canvas);
-  border: 1px solid var(--border-hairline);
+  background: var(--brand-blue-soft);
+  border: 1px solid var(--brand-blue-border);
   font-size: 0.78rem;
   font-weight: 700;
-  color: var(--ink-600);
+  color: var(--brand-primary);
   width: fit-content;
   margin-bottom: 1.1rem;
 }
@@ -352,24 +410,24 @@ button {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--brand-emerald);
-  box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.2);
+  background: var(--action-orange-vibrant);
+  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.25);
 }
 
 .bento-headline {
   font-size: clamp(1.75rem, 3vw, 2.55rem);
   font-weight: 800;
   letter-spacing: -0.035em;
-  line-height: 1.12;
+  line-height: 1.14;
   color: var(--ink-900);
   margin-bottom: 0.85rem;
 }
 
 .bento-headline em {
   font-style: normal;
-  color: var(--brand-emerald);
+  color: var(--brand-primary);
   text-decoration: underline;
-  text-decoration-color: rgba(13, 148, 136, 0.3);
+  text-decoration-color: rgba(37, 99, 235, 0.3);
   text-underline-offset: 6px;
 }
 
@@ -403,9 +461,9 @@ button {
 }
 
 .apple-search-bar:focus-within {
-  border-color: var(--brand-emerald);
+  border-color: var(--brand-primary);
   background: #ffffff;
-  box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.12);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
 }
 
 .search-slot {
@@ -420,7 +478,7 @@ button {
 }
 
 .search-slot i {
-  color: var(--brand-emerald);
+  color: var(--brand-primary);
   font-size: 1.1rem;
 }
 
@@ -440,19 +498,20 @@ button {
 }
 
 /* ==========================================================================
-   RIGHT BENTO: INTERACTIVE CAMPUS RADAR WIDGET
+   RIGHT BENTO: TECH NAVY SIMULASI CEK FISIK BARANG
    ========================================================================== */
 .bento-radar-card {
-  background: var(--ink-900);
+  background: var(--brand-navy-card);
   color: #ffffff;
   border-radius: var(--radius-xl);
   padding: 1.65rem;
-  box-shadow: var(--shadow-ambient);
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.18);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   position: relative;
   overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .bento-radar-card::after {
@@ -460,7 +519,7 @@ button {
   position: absolute;
   width: 280px;
   height: 280px;
-  border: 1px dashed rgba(255, 255, 255, 0.08);
+  border: 1px dashed rgba(249, 115, 22, 0.18);
   border-radius: 50%;
   right: -90px;
   bottom: -90px;
@@ -482,95 +541,24 @@ button {
 
 .radar-title-group p {
   font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.65);
 }
 
 .radar-badge {
   font-size: 0.72rem;
-  font-weight: 700;
-  padding: 0.25rem 0.65rem;
-  border-radius: var(--radius-pill);
-  background: rgba(13, 148, 136, 0.25);
-  color: #5eead4;
-  border: 1px solid rgba(94, 234, 212, 0.3);
-}
-
-.zones-bento-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.6rem;
-}
-
-.zone-tile {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-md);
-  padding: 0.75rem 0.85rem;
-  text-align: left;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  transition: all 0.2s ease;
-}
-
-.zone-tile:hover {
-  background: rgba(255, 255, 255, 0.12);
-  transform: translateY(-2px);
-}
-
-.zone-tile.active {
-  background: var(--brand-emerald);
-  border-color: #5eead4;
-  box-shadow: 0 8px 20px rgba(13, 148, 136, 0.35);
-}
-
-.zone-tile-left {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-
-.zone-tile-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-}
-
-.zone-name {
-  font-size: 0.82rem;
-  font-weight: 700;
-  display: block;
-}
-
-.zone-code {
-  font-size: 0.68rem;
-  color: rgba(255, 255, 255, 0.55);
-}
-
-.zone-count-pill {
-  font-size: 0.75rem;
   font-weight: 800;
-  min-width: 24px;
-  height: 24px;
-  padding: 0 0.45rem;
+  padding: 0.28rem 0.7rem;
   border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.14);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  background: rgba(249, 115, 22, 0.2);
+  color: #fb923c;
+  border: 1px solid rgba(249, 115, 22, 0.35);
 }
 
 /* ==========================================================================
-   SPOTLIGHT URGENT BOARDING PASS (ANTI-AI TICKET COMPONENT)
+   SPOTLIGHT URGENT BOARDING PASS (ORANGE ALERT STRIP)
    ========================================================================== */
 .urgent-pass-strip {
-  background: linear-gradient(90deg, #1e1b18 0%, #2d2620 100%);
+  background: linear-gradient(90deg, #1e293b 0%, #0f172a 100%);
   color: #fff;
   border-radius: var(--radius-lg);
   padding: 1rem 1.35rem;
@@ -581,7 +569,10 @@ button {
   gap: 1rem;
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-left: 4px solid var(--action-orange-vibrant);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .urgent-pass-left {
@@ -592,7 +583,7 @@ button {
 }
 
 .pass-tag {
-  background: var(--lost-coral);
+  background: var(--action-orange);
   color: #fff;
   font-size: 0.7rem;
   font-weight: 800;
@@ -612,14 +603,14 @@ button {
 
 .urgent-pass-loc {
   font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.65);
+  color: rgba(255, 255, 255, 0.7);
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
 }
 
 /* ==========================================================================
-   APPLE SEGMENTED FILTER BAR & CATEGORY CHIPS
+   SEGMENTED FILTER TABS & CATEGORY CHIPS
    ========================================================================== */
 .SegmentedControlBar {
   display: flex;
@@ -655,7 +646,7 @@ button {
 }
 
 .seg-btn.active {
-  color: var(--ink-900);
+  color: var(--brand-primary);
 }
 
 .seg-pill-bg {
@@ -663,7 +654,7 @@ button {
   inset: 0;
   background: #ffffff;
   border-radius: var(--radius-pill);
-  box-shadow: 0 2px 8px rgba(20, 20, 19, 0.08);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
   z-index: -1;
 }
 
@@ -672,7 +663,7 @@ button {
   font-weight: 800;
   padding: 0.08rem 0.45rem;
   border-radius: var(--radius-pill);
-  background: rgba(20, 20, 19, 0.07);
+  background: var(--bg-subtle);
 }
 
 .filter-right-controls {
@@ -722,18 +713,18 @@ button {
 }
 
 .cat-pill:hover {
-  border-color: var(--ink-400);
-  color: var(--ink-900);
+  border-color: var(--brand-primary);
+  color: var(--brand-primary);
 }
 
 .cat-pill.active {
-  background: var(--ink-900);
+  background: var(--brand-primary);
   color: #ffffff;
-  border-color: var(--ink-900);
+  border-color: var(--brand-primary);
 }
 
 /* ==========================================================================
-   ASYMMETRIC EDITORIAL ITEM CARDS (NON-MONOTONOUS FEED)
+   FEED ITEM CARDS (MERAH KEHILANGAN & HIJAU DITEMUKAN)
    ========================================================================== */
 .feed-status-row {
   display: flex;
@@ -765,7 +756,6 @@ button {
   transition: border-color 0.2s ease, box-shadow 0.25s ease;
 }
 
-/* First card in exploration gets spotlight wide Bento span when enough items */
 .organic-card.card-featured {
   grid-column: span 8;
   display: grid;
@@ -773,7 +763,7 @@ button {
 }
 
 .organic-card:hover {
-  border-color: rgba(13, 148, 136, 0.35);
+  border-color: rgba(37, 99, 235, 0.35);
   box-shadow: var(--shadow-float);
 }
 
@@ -800,11 +790,12 @@ button {
   transform: scale(1.05);
 }
 
+/* Status Badges: Merah (Hilang), Hijau (Temukan), Slate (Selesai) */
 .floating-status-tag {
   position: absolute;
   top: 0.85rem;
   left: 0.85rem;
-  padding: 0.32rem 0.75rem;
+  padding: 0.34rem 0.8rem;
   border-radius: var(--radius-pill);
   font-size: 0.72rem;
   font-weight: 800;
@@ -814,21 +805,21 @@ button {
   align-items: center;
   gap: 0.35rem;
   backdrop-filter: blur(12px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
 }
 
 .tag-lost {
-  background: rgba(225, 29, 72, 0.92);
+  background: rgba(220, 38, 38, 0.94);
   color: #fff;
 }
 
 .tag-found {
-  background: rgba(5, 150, 105, 0.92);
+  background: rgba(22, 163, 74, 0.94);
   color: #fff;
 }
 
 .tag-resolved {
-  background: rgba(38, 37, 35, 0.88);
+  background: rgba(71, 85, 105, 0.92);
   color: #fff;
 }
 
@@ -837,8 +828,8 @@ button {
   bottom: 0.75rem;
   left: 0.75rem;
   background: rgba(254, 243, 199, 0.95);
-  color: #92400e;
-  border: 1px solid #fde68a;
+  color: #9a3412;
+  border: 1px solid #fed7aa;
   padding: 0.25rem 0.65rem;
   border-radius: var(--radius-pill);
   font-size: 0.72rem;
@@ -924,7 +915,7 @@ button {
 }
 
 .card-location-line i {
-  color: var(--brand-emerald);
+  color: var(--brand-primary);
 }
 
 /* Ticket Perforation Divider */
@@ -950,7 +941,7 @@ button {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: var(--brand-forest);
+  background: var(--brand-primary);
   color: #fff;
   display: inline-flex;
   align-items: center;
@@ -960,12 +951,12 @@ button {
 }
 
 /* ==========================================================================
-   APPLE iOS / macOS SLIDE-OVER SHEET & SPRING MODAL
+   SLIDE-OVER SHEET & SPRING MODALS
    ========================================================================== */
 .apple-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(20, 20, 19, 0.42);
+  background: rgba(15, 23, 42, 0.48);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   z-index: 200;
@@ -976,7 +967,7 @@ button {
 .apple-center-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(20, 20, 19, 0.45);
+  background: rgba(15, 23, 42, 0.5);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   z-index: 210;
@@ -1003,8 +994,8 @@ button {
   max-height: 90vh;
   background: var(--bg-elevated);
   border-radius: var(--radius-xl);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  box-shadow: 0 28px 70px rgba(20, 20, 19, 0.25);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 28px 70px rgba(15, 23, 42, 0.25);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -1016,7 +1007,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(16px);
 }
 
@@ -1033,7 +1024,7 @@ button {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: var(--bg-canvas);
+  background: var(--bg-subtle);
   color: var(--ink-600);
   display: inline-flex;
   align-items: center;
@@ -1133,7 +1124,8 @@ button {
 
 .apple-input:focus {
   background: #ffffff;
-  border-color: var(--brand-emerald);
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 .type-switch-grid {
@@ -1152,17 +1144,17 @@ button {
 }
 
 .type-switch-card.active-lost {
-  border-color: var(--lost-coral);
-  background: var(--lost-coral-soft);
+  border-color: var(--lost-red);
+  background: var(--lost-red-soft);
 }
 
 .type-switch-card.active-found {
-  border-color: var(--found-jade);
-  background: var(--found-jade-soft);
+  border-color: var(--found-green);
+  background: var(--found-green-soft);
 }
 
 /* ==========================================================================
-   SAFETY BENTO SECTION & FOOTER
+   SAFETY SECTION & FOOTER
    ========================================================================== */
 .safety-bento-section {
   margin: 2rem 0 3rem;
@@ -1170,6 +1162,7 @@ button {
   border-radius: var(--radius-xl);
   padding: 2.25rem;
   border: 1px solid var(--border-hairline);
+  box-shadow: var(--shadow-ambient);
 }
 
 .safety-cards-row {
@@ -1190,13 +1183,14 @@ button {
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  background: var(--ink-900);
+  background: var(--brand-primary);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.15rem;
   margin-bottom: 0.85rem;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
 }
 
 .apple-footer {
@@ -1238,10 +1232,11 @@ button {
   gap: 0.75rem;
   min-width: 280px;
   max-width: 380px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* ==========================================================================
-   RESPONSIVE BREAKPOINTS (TABLET & 375px MOBILE)
+   RESPONSIVE (TABLET & 375px MOBILE)
    ========================================================================== */
 @media (max-width: 1024px) {
   .bento-command-grid {
@@ -1311,8 +1306,4 @@ button {
     padding: 0.45rem 0.8rem;
     font-size: 0.78rem;
   }
-  .zones-bento-grid {
-    grid-template-columns: 1fr;
-  }
 }
-

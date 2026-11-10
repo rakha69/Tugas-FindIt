@@ -390,7 +390,7 @@ export default function App() {
               <>
                 <button
                   type="button"
-                  className="btn-apple btn-emerald btn-sm"
+                  className="btn-apple btn-orange btn-sm"
                   onClick={handleTriggerReport}
                 >
                   <i className="ri-add-circle-line"></i> Lapor Barang
@@ -452,14 +452,14 @@ export default function App() {
                       transparan.
                     </p>
 
-                    {/* Centered Primary CTA Button */}
+                    {/* Centered Primary CTA Button - Vibrant Orange Alert */}
                     <div className="hero-cta-centered">
                       <motion.button
                         whileHover={{ scale: 1.03 }}
                         whileTap={{ scale: 0.96 }}
                         type="button"
                         id="btnHeroReport"
-                        className="btn-apple btn-emerald btn-lg"
+                        className="btn-apple btn-orange btn-lg"
                         onClick={handleTriggerReport}
                       >
                         <i className="ri-add-circle-fill" style={{ fontSize: "1.2rem" }}></i>
@@ -596,10 +596,10 @@ export default function App() {
                               width: "100%",
                               textAlign: "left",
                               background: isChecked
-                                ? "rgba(13, 148, 136, 0.22)"
+                                ? "rgba(234, 88, 12, 0.22)"
                                 : "rgba(255, 255, 255, 0.05)",
                               border: isChecked
-                                ? "1px solid rgba(94, 234, 212, 0.45)"
+                                ? "1px solid rgba(251, 146, 60, 0.55)"
                                 : "1px solid rgba(255, 255, 255, 0.1)",
                               borderRadius: "var(--radius-md)",
                               padding: "0.68rem 0.85rem",
@@ -616,7 +616,7 @@ export default function App() {
                                 height: 22,
                                 borderRadius: "7px",
                                 background: isChecked
-                                  ? "var(--brand-emerald)"
+                                  ? "var(--action-orange-vibrant)"
                                   : "rgba(255, 255, 255, 0.12)",
                                 display: "flex",
                                 alignItems: "center",
@@ -638,7 +638,7 @@ export default function App() {
                                   fontSize: "0.82rem",
                                   fontWeight: 700,
                                   textDecoration: isChecked ? "none" : "none",
-                                  color: isChecked ? "#5eead4" : "#ffffff"
+                                  color: isChecked ? "#fb923c" : "#ffffff"
                                 }}
                               >
                                 {step.title}
@@ -685,8 +685,8 @@ export default function App() {
                           height: "100%",
                           background:
                             readinessScore === 100
-                              ? "linear-gradient(90deg, #10b981, #34d399)"
-                              : "var(--brand-emerald)"
+                              ? "linear-gradient(90deg, #16a34a, #22c55e)"
+                              : "linear-gradient(90deg, #ea580c, #f97316)"
                         }}
                       />
                     </div>
@@ -711,7 +711,7 @@ export default function App() {
                             readinessScore === 100 ? [false, false, false] : [true, true, true]
                           )
                         }
-                        style={{ color: "#5eead4", fontWeight: 700, whiteSpace: "nowrap" }}
+                        style={{ color: "#fb923c", fontWeight: 700, whiteSpace: "nowrap" }}
                       >
                         {readinessScore === 100 ? "Ulangi" : "Centang Semua"}
                       </button>
@@ -949,7 +949,7 @@ export default function App() {
                                 style={{
                                   fontSize: "0.8rem",
                                   fontWeight: 800,
-                                  color: "var(--brand-emerald)",
+                                  color: "var(--brand-primary)",
                                   display: "inline-flex",
                                   alignItems: "center",
                                   gap: "0.2rem"
@@ -1005,11 +1005,11 @@ export default function App() {
                     className="btn-apple btn-glass"
                     onClick={() => setActiveView("explore")}
                   >
-                    <i className="ri-arrow-left-line"></i> Kembali ke Radar
+                    <i className="ri-arrow-left-line"></i> Kembali ke Katalog
                   </button>
                   <button
                     type="button"
-                    className="btn-apple btn-emerald"
+                    className="btn-apple btn-orange"
                     onClick={() => setIsReportModalOpen(true)}
                   >
                     <i className="ri-add-line"></i> Buat Laporan Baru
@@ -1035,7 +1035,7 @@ export default function App() {
                   </p>
                   <button
                     type="button"
-                    className="btn-apple btn-emerald"
+                    className="btn-apple btn-orange"
                     onClick={() => setIsReportModalOpen(true)}
                   >
                     <i className="ri-add-circle-line"></i> Buat Laporan Pertama
@@ -1101,7 +1101,7 @@ export default function App() {
                             {item.claims && item.claims.length > 0 && (
                               <button
                                 type="button"
-                                className="btn-apple btn-emerald btn-sm"
+                                className="btn-apple btn-blue btn-sm"
                                 onClick={() => setClaimsReviewItem(item)}
                               >
                                 <i className="ri-shield-user-line"></i> Klaim ({item.claims.length})
@@ -1244,7 +1244,7 @@ export default function App() {
               {/* Clean Header without overlapping status badge */}
               <div className="sheet-header">
                 <div className="sheet-header-title">
-                  <i className="ri-compass-3-line" style={{ color: "var(--brand-emerald)" }}></i>
+                  <i className="ri-compass-3-line" style={{ color: "var(--brand-primary)" }}></i>
                   <span>{selectedItem.category}</span>
                 </div>
                 <button
@@ -1325,7 +1325,7 @@ export default function App() {
                 <div className="spec-grid">
                   <div className="spec-cell">
                     <div className="spec-label">Status Saat Ini</div>
-                    <div className="spec-val" style={{ color: "var(--brand-emerald)" }}>
+                    <div className="spec-val" style={{ color: "var(--brand-primary)" }}>
                       {selectedItem.status === "resolved"
                         ? "Kasus Selesai (Barang sudah diserahkan)"
                         : selectedItem.type === "found"
@@ -1414,12 +1414,12 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Action Buttons: 1. Klaim (Primary), 2. WhatsApp (Secondary Outline) */}
+                {/* Action Buttons: 1. Klaim (Primary Vibrant Orange), 2. WhatsApp (Secondary Outline) */}
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.65rem" }}>
                   {selectedItem.status !== "resolved" && (
                     <button
                       type="button"
-                      className="btn-apple btn-emerald btn-lg"
+                      className="btn-apple btn-orange btn-lg"
                       style={{ width: "100%" }}
                       onClick={() => {
                         if (!currentUser) {
@@ -1673,7 +1673,7 @@ function AuthModal({ mode, setMode, pendingReport, onClose, onSuccess, pushToast
       >
         <div className="sheet-header">
           <div className="sheet-header-title">
-            <i className="ri-shield-keyhole-line" style={{ color: "var(--brand-emerald)" }}></i>
+            <i className="ri-shield-keyhole-line" style={{ color: "var(--brand-primary)" }}></i>
             <span>{mode === "login" ? "Masuk ke Akun Kampus" : "Pendaftaran Mahasiswa"}</span>
           </div>
           <button type="button" className="btn-circle-close" onClick={onClose}>
@@ -1685,8 +1685,8 @@ function AuthModal({ mode, setMode, pendingReport, onClose, onSuccess, pushToast
           {pendingReport && (
             <div
               style={{
-                background: "var(--brand-emerald-soft)",
-                color: "var(--brand-forest)",
+                background: "var(--brand-blue-soft)",
+                color: "var(--brand-navy)",
                 padding: "0.7rem 0.95rem",
                 borderRadius: "var(--radius-sm)",
                 fontSize: "0.82rem",
@@ -1774,7 +1774,7 @@ function AuthModal({ mode, setMode, pendingReport, onClose, onSuccess, pushToast
                 </div>
               </div>
 
-              <button type="submit" className="btn-apple btn-emerald btn-lg">
+              <button type="submit" className="btn-apple btn-blue btn-lg">
                 <i className="ri-login-circle-line"></i> Masuk Sekarang
               </button>
 
@@ -1788,7 +1788,7 @@ function AuthModal({ mode, setMode, pendingReport, onClose, onSuccess, pushToast
                 }}
               >
                 <div style={{ fontSize: "0.76rem", fontWeight: 800, marginBottom: "0.45rem" }}>
-                  <i className="ri-sparkling-line" style={{ color: "var(--brand-emerald)" }}></i>{" "}
+                  <i className="ri-sparkling-line" style={{ color: "var(--brand-primary)" }}></i>{" "}
                   Akun Demo Klik Cepat:
                 </div>
                 <div style={{ display: "flex", gap: "0.45rem", flexWrap: "wrap" }}>
@@ -1884,7 +1884,7 @@ function AuthModal({ mode, setMode, pendingReport, onClose, onSuccess, pushToast
                   required
                 />
               </div>
-              <button type="submit" className="btn-apple btn-emerald btn-lg">
+              <button type="submit" className="btn-apple btn-blue btn-lg">
                 <i className="ri-user-add-line"></i> Buat Akun Mahasiswa
               </button>
             </form>
@@ -1976,7 +1976,7 @@ function ReportModal({ currentUser, onClose, onSubmit, pushToast }) {
       >
         <div className="sheet-header">
           <div className="sheet-header-title">
-            <i className="ri-add-circle-line" style={{ color: "var(--brand-emerald)" }}></i>
+            <i className="ri-add-circle-line" style={{ color: "var(--brand-primary)" }}></i>
             <span>Terbitkan Laporan Barang Kampus</span>
           </div>
           <button type="button" className="btn-circle-close" onClick={onClose}>
@@ -2141,7 +2141,7 @@ function ReportModal({ currentUser, onClose, onSubmit, pushToast }) {
               <button type="button" className="btn-apple btn-glass" onClick={onClose}>
                 Batal
               </button>
-              <button type="submit" className="btn-apple btn-emerald">
+              <button type="submit" className="btn-apple btn-orange">
                 <i className="ri-send-plane-fill"></i> Terbitkan Laporan
               </button>
             </div>
@@ -2188,7 +2188,7 @@ function ClaimModal({ item, currentUser, onClose, onSubmit }) {
       >
         <div className="sheet-header">
           <div className="sheet-header-title">
-            <i className="ri-shield-check-line" style={{ color: "var(--brand-emerald)" }}></i>
+            <i className="ri-shield-check-line" style={{ color: "var(--brand-primary)" }}></i>
             <span>Verifikasi Klaim: {item.title}</span>
           </div>
           <button type="button" className="btn-circle-close" onClick={onClose}>
@@ -2248,7 +2248,7 @@ function ClaimModal({ item, currentUser, onClose, onSubmit }) {
               <button type="button" className="btn-apple btn-glass" onClick={onClose}>
                 Batal
               </button>
-              <button type="submit" className="btn-apple btn-emerald">
+              <button type="submit" className="btn-apple btn-orange">
                 <i className="ri-check-double-line"></i> Kirim Pengajuan Klaim
               </button>
             </div>
@@ -2279,7 +2279,7 @@ function ClaimsReviewModal({ item, onClose, onApprove }) {
       >
         <div className="sheet-header">
           <div className="sheet-header-title">
-            <i className="ri-user-search-line" style={{ color: "var(--brand-emerald)" }}></i>
+            <i className="ri-user-search-line" style={{ color: "var(--brand-primary)" }}></i>
             <span>Daftar Klaim Masuk ({claims.length})</span>
           </div>
           <button type="button" className="btn-circle-close" onClick={onClose}>
@@ -2334,7 +2334,7 @@ function ClaimsReviewModal({ item, onClose, onApprove }) {
                 </a>
                 <button
                   type="button"
-                  className="btn-apple btn-emerald btn-sm"
+                  className="btn-apple btn-blue btn-sm"
                   onClick={() => onApprove(item.id)}
                 >
                   Setujui &amp; Selesai
@@ -2383,7 +2383,7 @@ function ProfileModal({ currentUser, onClose, onUpdated }) {
       >
         <div className="sheet-header">
           <div className="sheet-header-title">
-            <i className="ri-user-settings-line" style={{ color: "var(--brand-emerald)" }}></i>
+            <i className="ri-user-settings-line" style={{ color: "var(--brand-primary)" }}></i>
             <span>Profil Mahasiswa</span>
           </div>
           <button type="button" className="btn-circle-close" onClick={onClose}>
@@ -2435,7 +2435,7 @@ function ProfileModal({ currentUser, onClose, onUpdated }) {
                 required
               />
             </div>
-            <button type="submit" className="btn-apple btn-emerald btn-lg">
+            <button type="submit" className="btn-apple btn-blue btn-lg">
               Simpan Perubahan Profil
             </button>
           </form>
