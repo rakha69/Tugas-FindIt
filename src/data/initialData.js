@@ -1,9 +1,8 @@
 /**
- * FINDIT - Data Awal & Model State (Kampus Lost & Found)
- * File ini menangani inisialisasi data dummy realistis untuk keperluan demo tugas kuliah
+ * Data Awal & Konfigurasi Zona Kampus Findit
  */
 
-const INITIAL_USERS = [
+export const INITIAL_USERS = [
   {
     id: "usr-01",
     name: "Ahmad Rizky Pratama",
@@ -39,10 +38,10 @@ const INITIAL_USERS = [
   }
 ];
 
-const INITIAL_ITEMS = [
+export const INITIAL_ITEMS = [
   {
     id: "item-101",
-    type: "lost", // 'lost' (kehilangan) atau 'found' (ditemukan)
+    type: "lost",
     title: "KTM atas nama Muhammad Thoriq Bintang Pamungkas",
     category: "Dokumen & Kartu",
     location: "Perpustakaan Pusat Lantai 2",
@@ -52,12 +51,12 @@ const INITIAL_ITEMS = [
     specificFeatures: "Goresan tipis di sudut kanan bawah KTM.",
     reward: "Ada ucapan terima kasih + traktiran kopi",
     image: "assets/images/KTM.JPG",
-    status: "active", // 'active', 'resolved'
+    status: "active",
     reporterId: "usr-01",
     reporterName: "Muhammad Thoriq Bintang Pamungkas",
     reporterFaculty: "Fasilkom",
     reporterPhone: "081310214043",
-    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 jam lalu
+    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
     views: 48,
     claims: []
   },
@@ -78,7 +77,7 @@ const INITIAL_ITEMS = [
     reporterName: "Nabila Putri Cantika",
     reporterFaculty: "FEB",
     reporterPhone: "089876543210",
-    createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(), // 4 jam lalu
+    createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(),
     views: 112,
     claims: []
   },
@@ -99,7 +98,7 @@ const INITIAL_ITEMS = [
     reporterName: "Fajar Satria Yudha",
     reporterFaculty: "Fakultas Teknik",
     reporterPhone: "085712345678",
-    createdAt: new Date(Date.now() - 26 * 60 * 60 * 1000).toISOString(), // 1 hari lalu
+    createdAt: new Date(Date.now() - 26 * 60 * 60 * 1000).toISOString(),
     views: 89,
     claims: []
   },
@@ -136,7 +135,7 @@ const INITIAL_ITEMS = [
     specificFeatures: "Tutup geser kalkulator ada coretan spidol perak berupa angka rombongan praktikum.",
     reward: "",
     image: "https://images.unsplash.com/photo-1587145820266-a5951ee6f620?auto=format&fit=crop&w=600&q=80",
-    status: "resolved", // Sudah diambil pemiliknya
+    status: "resolved",
     reporterId: "usr-03",
     reporterName: "Fajar Satria Yudha",
     reporterFaculty: "Fakultas Teknik",
@@ -177,21 +176,37 @@ const INITIAL_ITEMS = [
   }
 ];
 
-// Helper untuk menginisialisasi localStorage jika pertama kali dibuka
-function initDatabase() {
+export const CAMPUS_ZONES = [
+  { id: "Perpustakaan", label: "Perpustakaan Pusat", short: "Perpus", icon: "ri-book-open-line", code: "Z-01" },
+  { id: "Kantin", label: "Kantin Utama", short: "Kantin", icon: "ri-cup-line", code: "Z-02" },
+  { id: "Parkir", label: "Parkiran & Teknik", short: "Parkir B", icon: "ri-motorbike-line", code: "Z-03" },
+  { id: "Gedung Kuliah Bersama", label: "Gedung Kuliah Bersama", short: "GKB", icon: "ri-building-4-line", code: "Z-04" },
+  { id: "Laboratorium", label: "Laboratorium", short: "Labkom", icon: "ri-macbook-line", code: "Z-05" },
+  { id: "Musholla", label: "Musholla & Rektorat", short: "Rektorat", icon: "ri-compass-3-line", code: "Z-06" }
+];
+
+export const CATEGORIES = [
+  { id: "", label: "Semua Kategori", icon: "ri-apps-2-line" },
+  { id: "Dokumen & Kartu", label: "Dokumen & Kartu", icon: "ri-id-card-line" },
+  { id: "Elektronik", label: "Elektronik", icon: "ri-macbook-line" },
+  { id: "Kunci & Aksesoris", label: "Kunci & Aksesoris", icon: "ri-key-2-line" },
+  { id: "Tas & Dompet", label: "Tas & Dompet", icon: "ri-wallet-3-line" },
+  { id: "Barang Pribadi", label: "Barang Pribadi", icon: "ri-cup-line" },
+  { id: "Pakaian", label: "Pakaian", icon: "ri-t-shirt-line" },
+  { id: "Lainnya", label: "Lainnya", icon: "ri-more-fill" }
+];
+
+export function initDatabase() {
   if (!localStorage.getItem("findit_users")) {
     localStorage.setItem("findit_users", JSON.stringify(INITIAL_USERS));
   }
   if (!localStorage.getItem("findit_items")) {
     localStorage.setItem("findit_items", JSON.stringify(INITIAL_ITEMS));
   }
+  migrateLocalImages();
 }
 
-/**
- * Migrasi otomatis: patch gambar & data item demo yang berubah.
- * Berjalan setiap load — aman karena hanya update field yang berbeda.
- */
-function migrateLocalImages() {
+export function migrateLocalImages() {
   const PATCH_MAP = {
     "item-101": {
       image: "assets/images/KTM.JPG",
@@ -209,10 +224,14 @@ function migrateLocalImages() {
   if (!raw) return;
 
   let items;
-  try { items = JSON.parse(raw); } catch (e) { return; }
+  try {
+    items = JSON.parse(raw);
+  } catch (e) {
+    return;
+  }
 
   let changed = false;
-  items = items.map(item => {
+  items = items.map((item) => {
     const patch = PATCH_MAP[item.id];
     if (!patch) return item;
 
@@ -233,7 +252,11 @@ function migrateLocalImages() {
   }
 }
 
-// Jalankan otomatis
-initDatabase();
-migrateLocalImages();
+export function getStoredItems() {
+  const raw = localStorage.getItem("findit_items");
+  return raw ? JSON.parse(raw) : INITIAL_ITEMS;
+}
 
+export function saveStoredItems(items) {
+  localStorage.setItem("findit_items", JSON.stringify(items));
+}
