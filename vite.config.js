@@ -11,7 +11,7 @@ export default defineConfig({
       transformIndexHtml(html) {
         return html
           .replace(/<link rel="stylesheet" href="\.\/dist\/assets\/app\.css[^"]*">/, '')
-          .replace('./dist/assets/app.js', '/src/main.jsx');
+          .replace(/\.\/dist\/assets\/app\.js[^"]*/, '/src/main.jsx');
       }
     }
   ],
@@ -28,4 +28,3 @@ export default defineConfig({
     }
   }
 });
-

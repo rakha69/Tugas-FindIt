@@ -307,7 +307,7 @@ export default function App() {
               <div className="brand-title">
                 Find<span>it</span>.
               </div>
-              <div className="brand-tag">Campus Radar 2.0</div>
+              <div className="brand-tag">Campus Lost &amp; Found</div>
             </div>
           </div>
 
@@ -326,8 +326,8 @@ export default function App() {
                     transition={APPLE_SPRING}
                   />
                 )}
-                <i className="ri-radar-line"></i>
-                <span>Eksplorasi Radar</span>
+                <i className="ri-compass-3-line"></i>
+                <span>Jelajahi Barang</span>
               </button>
 
               {currentUser && (
@@ -447,8 +447,9 @@ export default function App() {
                       Kehilangan atau Menemukan Barang di Kampus? Lacak di <em>Findit.</em>
                     </h1>
                     <p className="bento-subtext">
-                      Dirancang agar civitas akademika dapat melaporkan, memfilter titik gedung secara
-                      interaktif, dan memverifikasi klaim kepemilikan dengan aman.
+                      Platform kolaboratif sivitas akademika untuk melaporkan barang hilang,
+                      mengamankan barang temuan, dan memverifikasi bukti kepemilikan secara
+                      transparan.
                     </p>
 
                     {/* Centered Primary CTA Button */}
