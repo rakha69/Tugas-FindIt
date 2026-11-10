@@ -105,18 +105,74 @@ export default function App() {
     return { all, lost, found, resolved, myCount };
   }, [items, currentUser]);
 
-  // Hitungan item aktif per Zona Kampus
-  const zoneCounts = useMemo(() => {
-    const map = {};
-    CAMPUS_ZONES.forEach((z) => {
-      map[z.id] = items.filter(
-        (item) =>
-          item.status !== "resolved" &&
-          (item.location || "").toLowerCase().includes(z.id.toLowerCase())
-      ).length;
-    });
-    return map;
-  }, [items]);
+  // State Simulasi Cek Fisik & Verifikasi (Interactive Inspection Checklist)
+  const [inspectionPreset, setInspectionPreset] = useState("dokumen"); // 'dokumen' | 'elektronik' | 'kunci'
+  const [checkedSteps, setCheckedSteps] = useState([true, false, false]);
+
+  const inspectionProtocols = {
+    dokumen: {
+      label: "KTM & Dompet",
+      icon: "ri-id-card-line",
+      steps: [
+        {
+          title: "Cocokkan NIM & Foto Identitas",
+          desc: "Pastikan wajah & NIM pengklaim sesuai dengan yang tertera di kartu."
+        },
+        {
+          title: "Tanyakan Isi Saku Tersembunyi",
+          desc: "Minta sebutkan kartu lain, struk, atau ciri goresan yang dirahasiakan."
+        },
+        {
+          title: "Serah Terima di Titik Publik",
+          desc: "Bertemu di Meja Sirkulasi Perpustakaan atau Pos Satpam Rektorat."
+        }
+      ]
+    },
+    elektronik: {
+      label: "Gadget & Audio",
+      icon: "ri-macbook-line",
+      steps: [
+        {
+          title: "Uji Koneksi Otomatis / Lockscreen",
+          desc: "Cek apakah perangkat langsung terhubung (auto-pair) atau cocok gambar lockscreen-nya."
+        },
+        {
+          title: "Periksa Inisial / Casing / Nomor Seri",
+          desc: "Verifikasi ukiran laser, stiker, atau goresan bodi yang tidak tampak di foto."
+        },
+        {
+          title: "Serah Terima di Titik Publik",
+          desc: "Bertemu di Ruang Asisten Lab atau Lobi Utama Fakultas saat jam kuliah."
+        }
+      ]
+    },
+    kunci: {
+      label: "Kunci & Barang",
+      icon: "ri-key-2-line",
+      steps: [
+        {
+          title: "Detail Gantungan & Anak Kunci",
+          desc: "Pastikan jumlah anak kunci, karakter gantungan, atau stiker botol sesuai."
+        },
+        {
+          title: "Validasi Kronologi Jam & Kelas",
+          desc: "Cocokkan waktu tertinggal dengan jadwal pemakaian ruangan/parkiran."
+        },
+        {
+          title: "Serah Terima di Titik Publik",
+          desc: "Bertemu di Pos Keamanan Parkiran atau Lobi Gedung Kuliah Bersama."
+        }
+      ]
+    }
+  };
+
+  const toggleInspectionStep = (idx) => {
+    setCheckedSteps((prev) => prev.map((val, i) => (i === idx ? !val : val)));
+  };
+
+  const readinessScore = Math.round(
+    (checkedSteps.filter(Boolean).length / checkedSteps.length) * 100
+  );
 
   // Item Kehilangan Spotlight (Urgent Pass)
   const urgentSpotlightItem = useMemo(() => {
@@ -460,74 +516,205 @@ export default function App() {
                   </form>
                 </div>
 
-                {/* Right Bento: Interactive Campus Zone Radar */}
+                {/* Right Bento: Interactive Inspection Checklist (Simulasi Cek Fisik & Verifikasi) */}
                 <div className="bento-radar-card">
-                  <div className="radar-header">
-                    <div className="radar-title-group">
-                      <h3>Radar Zona Kampus</h3>
-                      <p>Klik gedung untuk memfilter laporan di area tersebut</p>
+                  <div>
+                    <div className="radar-header">
+                      <div className="radar-title-group">
+                        <h3>Simulasi Cek Fisik Barang</h3>
+                        <p>Panduan verifikasi sebelum serah terima di kampus</p>
+                      </div>
+                      <span
+                        className="radar-badge"
+                        style={{
+                          background:
+                            readinessScore === 100
+                              ? "rgba(16, 185, 129, 0.25)"
+                              : "rgba(255, 255, 255, 0.1)",
+                          color: readinessScore === 100 ? "#6ee7b7" : "#e2e8f0"
+                        }}
+                      >
+                        <i className="ri-shield-check-fill"></i> {readinessScore}% Terverifikasi
+                      </span>
                     </div>
-                    <span className="radar-badge">
-                      <i className="ri-Information-line"></i> Interaktif
-                    </span>
-                  </div>
 
-                  <div className="zones-bento-grid">
-                    {CAMPUS_ZONES.map((zone) => {
-                      const isSelected = locationFilter === zone.id;
-                      const count = zoneCounts[zone.id] || 0;
-                      return (
-                        <motion.button
-                          key={zone.id}
-                          whileTap={{ scale: 0.96 }}
-                          type="button"
-                          className={`zone-tile ${isSelected ? "active" : ""}`}
-                          onClick={() =>
-                            setLocationFilter((prev) => (prev === zone.id ? "" : zone.id))
-                          }
-                        >
-                          <div className="zone-tile-left">
-                            <div className="zone-tile-icon">
-                              <i className={zone.icon}></i>
+                    {/* Category Preset Switcher */}
+                    <div
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(3, 1fr)",
+                        gap: "0.4rem",
+                        background: "rgba(255, 255, 255, 0.06)",
+                        padding: "0.28rem",
+                        borderRadius: "var(--radius-pill)",
+                        marginBottom: "0.95rem"
+                      }}
+                    >
+                      {Object.entries(inspectionProtocols).map(([key, cfg]) => {
+                        const active = inspectionPreset === key;
+                        return (
+                          <button
+                            key={key}
+                            type="button"
+                            onClick={() => {
+                              setInspectionPreset(key);
+                              setCheckedSteps([true, false, false]);
+                            }}
+                            style={{
+                              padding: "0.4rem 0.5rem",
+                              borderRadius: "var(--radius-pill)",
+                              fontSize: "0.74rem",
+                              fontWeight: 700,
+                              color: active ? "#141413" : "rgba(255,255,255,0.7)",
+                              background: active ? "#ffffff" : "transparent",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              gap: "0.3rem",
+                              transition: "all 0.18s ease"
+                            }}
+                          >
+                            <i className={cfg.icon}></i>
+                            <span>{cfg.label}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {/* Interactive Checkable Steps */}
+                    <div style={{ display: "flex", flexDirection: "column", gap: "0.55rem" }}>
+                      {inspectionProtocols[inspectionPreset].steps.map((step, idx) => {
+                        const isChecked = checkedSteps[idx];
+                        return (
+                          <motion.button
+                            key={`${inspectionPreset}-${idx}`}
+                            whileTap={{ scale: 0.98 }}
+                            type="button"
+                            onClick={() => toggleInspectionStep(idx)}
+                            style={{
+                              width: "100%",
+                              textAlign: "left",
+                              background: isChecked
+                                ? "rgba(13, 148, 136, 0.22)"
+                                : "rgba(255, 255, 255, 0.05)",
+                              border: isChecked
+                                ? "1px solid rgba(94, 234, 212, 0.45)"
+                                : "1px solid rgba(255, 255, 255, 0.1)",
+                              borderRadius: "var(--radius-md)",
+                              padding: "0.68rem 0.85rem",
+                              display: "flex",
+                              alignItems: "flex-start",
+                              gap: "0.65rem",
+                              color: "#fff",
+                              transition: "all 0.2s ease"
+                            }}
+                          >
+                            <div
+                              style={{
+                                width: 22,
+                                height: 22,
+                                borderRadius: "7px",
+                                background: isChecked
+                                  ? "var(--brand-emerald)"
+                                  : "rgba(255, 255, 255, 0.12)",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                flexShrink: 0,
+                                marginTop: "0.1rem",
+                                fontSize: "0.85rem"
+                              }}
+                            >
+                              {isChecked ? (
+                                <i className="ri-check-line"></i>
+                              ) : (
+                                <span style={{ fontSize: "0.7rem", opacity: 0.7 }}>{idx + 1}</span>
+                              )}
                             </div>
                             <div>
-                              <span className="zone-name">{zone.short}</span>
-                              <span className="zone-code">{zone.code}</span>
+                              <div
+                                style={{
+                                  fontSize: "0.82rem",
+                                  fontWeight: 700,
+                                  textDecoration: isChecked ? "none" : "none",
+                                  color: isChecked ? "#5eead4" : "#ffffff"
+                                }}
+                              >
+                                {step.title}
+                              </div>
+                              <div
+                                style={{
+                                  fontSize: "0.73rem",
+                                  color: "rgba(255, 255, 255, 0.62)",
+                                  lineHeight: 1.35
+                                }}
+                              >
+                                {step.desc}
+                              </div>
                             </div>
-                          </div>
-                          <span className="zone-count-pill">{count}</span>
-                        </motion.button>
-                      );
-                    })}
+                          </motion.button>
+                        );
+                      })}
+                    </div>
                   </div>
 
+                  {/* Live Verification Progress Bar Footer */}
                   <div
                     style={{
-                      marginTop: "1rem",
-                      paddingTop: "0.85rem",
-                      borderTop: "1px solid rgba(255,255,255,0.1)",
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      fontSize: "0.78rem",
-                      color: "rgba(255,255,255,0.65)"
+                      marginTop: "0.95rem",
+                      paddingTop: "0.8rem",
+                      borderTop: "1px solid rgba(255,255,255,0.1)"
                     }}
                   >
-                    <span>
-                      Status Filter Zona:{" "}
-                      <strong style={{ color: "#fff" }}>
-                        {locationFilter || "Seluruh Area Kampus"}
-                      </strong>
-                    </span>
-                    {locationFilter && (
+                    <div
+                      style={{
+                        height: 6,
+                        width: "100%",
+                        background: "rgba(255,255,255,0.1)",
+                        borderRadius: 99,
+                        overflow: "hidden",
+                        marginBottom: "0.5rem"
+                      }}
+                    >
+                      <motion.div
+                        initial={false}
+                        animate={{ width: `${readinessScore}%` }}
+                        transition={APPLE_SPRING}
+                        style={{
+                          height: "100%",
+                          background:
+                            readinessScore === 100
+                              ? "linear-gradient(90deg, #10b981, #34d399)"
+                              : "var(--brand-emerald)"
+                        }}
+                      />
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        fontSize: "0.75rem",
+                        color: "rgba(255,255,255,0.7)"
+                      }}
+                    >
+                      <span>
+                        {readinessScore === 100
+                          ? "✅ Seluruh syarat aman terpenuhi — Siap Serah Terima!"
+                          : "Centang poin di atas saat memverifikasi barang di lokasi"}
+                      </span>
                       <button
                         type="button"
-                        onClick={() => setLocationFilter("")}
-                        style={{ color: "#5eead4", fontWeight: 700 }}
+                        onClick={() =>
+                          setCheckedSteps(
+                            readinessScore === 100 ? [false, false, false] : [true, true, true]
+                          )
+                        }
+                        style={{ color: "#5eead4", fontWeight: 700, whiteSpace: "nowrap" }}
                       >
-                        Reset Zona
+                        {readinessScore === 100 ? "Ulangi" : "Centang Semua"}
                       </button>
-                    )}
+                    </div>
                   </div>
                 </div>
               </section>
@@ -2256,3 +2443,4 @@ function ProfileModal({ currentUser, onClose, onUpdated }) {
     </motion.div>
   );
 }
+

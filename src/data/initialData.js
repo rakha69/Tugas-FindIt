@@ -260,3 +260,4 @@ export function getStoredItems() {
 export function saveStoredItems(items) {
   localStorage.setItem("findit_items", JSON.stringify(items));
 }
+
