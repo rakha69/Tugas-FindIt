@@ -21,25 +21,49 @@ export const AuthService = {
     return raw ? JSON.parse(raw) : null;
   },
 
-  login(identifier, password) {
+  login(identifier, password, portalRole = "student") {
     const cleanId = (identifier || "").trim().toLowerCase();
     const cleanPass = (password || "").trim();
 
     if (!cleanId || !cleanPass) {
-      return { success: false, message: "Email/NIM dan kata sandi wajib diisi." };
+      return {
+        success: false,
+        message: portalRole === "admin"
+          ? "NIP/Email Petugas dan kata sandi otorisasi wajib diisi."
+          : "Email/NIM dan kata sandi wajib diisi."
+      };
     }
 
     const users = this.getUsers();
     const matchedUser = users.find(
       (u) =>
-        (u.email.toLowerCase() === cleanId || (u.nim && u.nim.toLowerCase() === cleanId)) &&
+        (u.email.toLowerCase() === cleanId ||
+          (u.nim && u.nim.toLowerCase() === cleanId) ||
+          (u.nip && u.nip.toLowerCase() === cleanId)) &&
         u.password === cleanPass
     );
 
     if (!matchedUser) {
       return {
         success: false,
-        message: "Email/NIM atau kata sandi tidak cocok."
+        message: portalRole === "admin"
+          ? "NIP Petugas atau kata sandi otorisasi tidak valid."
+          : "Email/NIM atau kata sandi tidak cocok."
+      };
+    }
+
+    // Validasi Pemisahan Role Portal Login
+    if (portalRole === "admin" && matchedUser.role !== "admin") {
+      return {
+        success: false,
+        message: "Akses Ditolak: Akun ini terdaftar sebagai Mahasiswa, bukan Petugas/Admin Kampus."
+      };
+    }
+
+    if (portalRole === "student" && matchedUser.role === "admin") {
+      return {
+        success: false,
+        message: "Akun ini adalah Petugas Keamanan Kampus. Silakan beralih ke tab 'Petugas & Admin Kampus'."
       };
     }
 
@@ -49,7 +73,9 @@ export const AuthService = {
 
     return {
       success: true,
-      message: `Selamat datang kembali, ${matchedUser.name}!`,
+      message: matchedUser.role === "admin"
+        ? `Selamat bertugas di Pusat Keamanan, ${matchedUser.name}!`
+        : `Selamat datang kembali, ${matchedUser.name}!`,
       user: sessionData
     };
   },
@@ -92,6 +118,7 @@ export const AuthService = {
 
     const newUser = {
       id: "usr-" + Date.now(),
+      role: "student",
       name: name.trim(),
       email: cleanEmail,
       nim: cleanNim,

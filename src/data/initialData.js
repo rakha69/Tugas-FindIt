@@ -2,9 +2,25 @@
  * Data Awal & Konfigurasi Zona Kampus Findit
  */
 
+export const ADMIN_USER = {
+  id: "admin-sec-01",
+  role: "admin",
+  name: "Bambang S. (Komandan Satpam)",
+  nip: "197805122003121002",
+  email: "admin.keamanan@kampus.ac.id",
+  faculty: "Biro Keamanan & Ketertiban Kampus",
+  phone: "081198765432",
+  password: "adminsecurity",
+  avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=150&q=80",
+  badge: "Koordinator Keamanan & Safe Meetup",
+  createdAt: "2026-09-01T08:00:00.000Z"
+};
+
 export const INITIAL_USERS = [
+  ADMIN_USER,
   {
     id: "usr-01",
+    role: "student",
     name: "Ahmad Rizky Pratama",
     email: "ahmad.rizky@mahasiswa.ac.id",
     nim: "2108561001",
@@ -16,6 +32,7 @@ export const INITIAL_USERS = [
   },
   {
     id: "usr-02",
+    role: "student",
     name: "Nabila Putri Cantika",
     email: "nabila.putri@mahasiswa.ac.id",
     nim: "2209102034",
@@ -27,6 +44,7 @@ export const INITIAL_USERS = [
   },
   {
     id: "usr-03",
+    role: "student",
     name: "Fajar Satria Yudha",
     email: "fajar.satria@mahasiswa.ac.id",
     nim: "2005013099",
@@ -199,6 +217,22 @@ export const CATEGORIES = [
 export function initDatabase() {
   if (!localStorage.getItem("findit_users")) {
     localStorage.setItem("findit_users", JSON.stringify(INITIAL_USERS));
+  } else {
+    try {
+      const users = JSON.parse(localStorage.getItem("findit_users") || "[]");
+      const hasAdmin = users.some(
+        (u) =>
+          u.role === "admin" ||
+          u.id === "admin-sec-01" ||
+          u.email === "admin.keamanan@kampus.ac.id"
+      );
+      if (!hasAdmin) {
+        users.unshift(ADMIN_USER);
+        localStorage.setItem("findit_users", JSON.stringify(users));
+      }
+    } catch (e) {
+      console.error("Gagal memeriksa akun admin:", e);
+    }
   }
   if (!localStorage.getItem("findit_items")) {
     localStorage.setItem("findit_items", JSON.stringify(INITIAL_ITEMS));

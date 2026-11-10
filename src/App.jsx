@@ -71,6 +71,7 @@ export default function App() {
   // State Modals & Sheets
   const [selectedItem, setSelectedItem] = useState(null);
   const [authModalMode, setAuthModalMode] = useState(null); // null | 'login' | 'register'
+  const [authPortalRole, setAuthPortalRole] = useState("student"); // 'student' | 'admin'
   const [pendingReportAfterLogin, setPendingReportAfterLogin] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [claimTargetItem, setClaimTargetItem] = useState(null);
@@ -330,7 +331,26 @@ export default function App() {
                 <span>Jelajahi Barang</span>
               </button>
 
-              {currentUser && (
+              {currentUser?.role === "admin" ? (
+                <button
+                  type="button"
+                  className={`dock-pill-btn ${activeView === "admin-dashboard" ? "active" : ""}`}
+                  onClick={() => setActiveView("admin-dashboard")}
+                >
+                  {activeView === "admin-dashboard" && (
+                    <motion.span
+                      layoutId="dockNavPill"
+                      className="dock-pill-bg"
+                      transition={APPLE_SPRING}
+                    />
+                  )}
+                  <i className="ri-shield-star-fill" style={{ color: "#16a34a" }}></i>
+                  <span>Pusat Kendali Admin</span>
+                  <span className="dock-count-chip" style={{ background: "#16a34a" }}>
+                    {items.length}
+                  </span>
+                </button>
+              ) : currentUser ? (
                 <button
                   type="button"
                   className={`dock-pill-btn ${activeView === "my-reports" ? "active" : ""}`}
@@ -347,7 +367,7 @@ export default function App() {
                   <span>Laporan Saya</span>
                   <span className="dock-count-chip">{counts.myCount}</span>
                 </button>
-              )}
+              ) : null}
 
               <button
                 type="button"
@@ -374,16 +394,30 @@ export default function App() {
                 <button
                   type="button"
                   className="btn-apple btn-glass btn-sm"
-                  onClick={() => setAuthModalMode("login")}
+                  onClick={() => {
+                    setAuthPortalRole("student");
+                    setAuthModalMode("login");
+                  }}
+                  title="Masuk untuk Pemilik & Penemu Barang"
                 >
-                  <i className="ri-login-circle-line"></i> Masuk
+                  <i className="ri-graduation-cap-line"></i> Masuk Mahasiswa
                 </button>
                 <button
                   type="button"
                   className="btn-apple btn-ink btn-sm"
-                  onClick={() => setAuthModalMode("register")}
+                  onClick={() => {
+                    setAuthPortalRole("admin");
+                    setAuthModalMode("login");
+                  }}
+                  style={{
+                    background: "#0f172a",
+                    border: "1px solid rgba(34, 197, 94, 0.4)",
+                    boxShadow: "0 4px 12px rgba(15, 23, 42, 0.2)"
+                  }}
+                  title="Portal Otoritas Petugas Keamanan / Satpam Kampus"
                 >
-                  Daftar Akun
+                  <i className="ri-shield-keyhole-line" style={{ color: "#4ade80" }}></i>
+                  <span>Portal Admin</span>
                 </button>
               </>
             ) : (
@@ -399,10 +433,28 @@ export default function App() {
                   type="button"
                   className="btn-apple btn-glass btn-sm"
                   onClick={() => setIsProfileModalOpen(true)}
-                  title="Profil Mahasiswa"
+                  title={currentUser.role === "admin" ? "Profil Petugas Keamanan" : "Profil Mahasiswa"}
+                  style={
+                    currentUser.role === "admin"
+                      ? {
+                          border: "1.5px solid #16a34a",
+                          background: "rgba(22, 163, 74, 0.08)",
+                          color: "#166534"
+                        }
+                      : {}
+                  }
                 >
-                  <i className="ri-user-smile-line"></i>
-                  <span>{currentUser.name.split(" ")[0]}</span>
+                  {currentUser.role === "admin" ? (
+                    <>
+                      <i className="ri-shield-check-fill" style={{ color: "#16a34a" }}></i>
+                      <span>Pak Bambang (Satpam)</span>
+                    </>
+                  ) : (
+                    <>
+                      <i className="ri-user-smile-line"></i>
+                      <span>{currentUser.name.split(" ")[0]}</span>
+                    </>
+                  )}
                 </button>
                 <button
                   type="button"
@@ -1203,6 +1255,18 @@ export default function App() {
               </section>
             </motion.div>
           )}
+
+          {/* ==================== VIEW 4: PUSAT KENDALI & MEDIASI KEAMANAN KAMPUS (ADMIN) ==================== */}
+          {activeView === "admin-dashboard" && currentUser?.role === "admin" && (
+            <AdminDashboardView
+              items={items}
+              onOpenDetail={handleOpenDetail}
+              onToggleResolved={handleToggleResolved}
+              onDeleteItem={handleDeleteItem}
+              onTriggerReport={handleTriggerReport}
+              pushToast={pushToast}
+            />
+          )}
         </AnimatePresence>
       </main>
 
@@ -1472,6 +1536,8 @@ export default function App() {
           <AuthModal
             mode={authModalMode}
             setMode={setAuthModalMode}
+            portalRole={authPortalRole}
+            setPortalRole={setAuthPortalRole}
             pendingReport={pendingReportAfterLogin}
             onClose={() => {
               setAuthModalMode(null);
@@ -1481,7 +1547,9 @@ export default function App() {
               setCurrentUser(user);
               setAuthModalMode(null);
               pushToast("Autentikasi Berhasil", msg, "success");
-              if (pendingReportAfterLogin) {
+              if (user.role === "admin") {
+                setActiveView("admin-dashboard");
+              } else if (pendingReportAfterLogin) {
                 setPendingReportAfterLogin(false);
                 setTimeout(() => setIsReportModalOpen(true), 220);
               }
@@ -1613,10 +1681,486 @@ export default function App() {
 }
 
 /* ==========================================================================
+   VIEW: DASHBOARD PUSAT KENDALI & MEDIASI KEAMANAN KAMPUS (ADMIN)
+   ========================================================================== */
+
+function AdminDashboardView({ items, onOpenDetail, onToggleResolved, onDeleteItem, onTriggerReport, pushToast }) {
+  const [adminStatusFilter, setAdminStatusFilter] = useState("all");
+  const [adminSearch, setAdminSearch] = useState("");
+
+  const stats = useMemo(() => {
+    const total = items.length;
+    const lost = items.filter((i) => i.type === "lost" && i.status !== "resolved").length;
+    const found = items.filter((i) => i.type === "found" && i.status !== "resolved").length;
+    const resolved = items.filter((i) => i.status === "resolved").length;
+    const totalClaims = items.reduce((acc, i) => acc + (i.claims ? i.claims.length : 0), 0);
+    return { total, lost, found, resolved, totalClaims };
+  }, [items]);
+
+  const filteredItems = useMemo(() => {
+    return items.filter((item) => {
+      if (adminStatusFilter === "lost" && (item.type !== "lost" || item.status === "resolved")) return false;
+      if (adminStatusFilter === "found" && (item.type !== "found" || item.status === "resolved")) return false;
+      if (adminStatusFilter === "resolved" && item.status !== "resolved") return false;
+
+      if (adminSearch.trim()) {
+        const q = adminSearch.toLowerCase();
+        const mTitle = (item.title || "").toLowerCase().includes(q);
+        const mDesc = (item.description || "").toLowerCase().includes(q);
+        const mReporter = (item.reporterName || "").toLowerCase().includes(q);
+        const mLoc = (item.location || "").toLowerCase().includes(q);
+        const mCat = (item.category || "").toLowerCase().includes(q);
+        return mTitle || mDesc || mReporter || mLoc || mCat;
+      }
+      return true;
+    });
+  }, [items, adminStatusFilter, adminSearch]);
+
+  return (
+    <motion.div
+      key="view-admin-dashboard"
+      initial={{ opacity: 0, y: 16, filter: "blur(6px)" }}
+      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      exit={{ opacity: 0, y: -12, filter: "blur(4px)" }}
+      transition={APPLE_SPRING}
+    >
+      {/* Admin Hero Header */}
+      <div
+        className="bento-hero-card"
+        style={{
+          marginBottom: "1.5rem",
+          background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
+          color: "#ffffff",
+          borderColor: "rgba(255,255,255,0.12)"
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "1rem" }}>
+          <div>
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                background: "rgba(22, 163, 74, 0.2)",
+                color: "#4ade80",
+                border: "1px solid rgba(74, 222, 128, 0.35)",
+                padding: "0.35rem 0.85rem",
+                borderRadius: "var(--radius-pill)",
+                fontSize: "0.76rem",
+                fontWeight: 800,
+                marginBottom: "0.75rem"
+              }}
+            >
+              <span className="pulse-dot" style={{ background: "#4ade80" }}></span>
+              <span>Safe-Campus Command Center &bull; Petugas Keamanan Aktif</span>
+            </div>
+            <h1 style={{ fontSize: "1.9rem", fontWeight: 800, letterSpacing: "-0.03em", color: "#ffffff", marginBottom: "0.4rem" }}>
+              Pusat Kendali &amp; Mediasi Keamanan Kampus
+            </h1>
+            <p style={{ color: "#94a3b8", fontSize: "0.92rem", maxWidth: 680, lineHeight: 1.5 }}>
+              Otoritas pengawasan lalu lintas laporan barang hilang &amp; temuan se-kampus, titik temu verifikasi fisik di Pos Satpam, dan moderasi konten anti-spam.
+            </p>
+          </div>
+
+          <div style={{ display: "flex", gap: "0.6rem", flexWrap: "wrap" }}>
+            <button
+              type="button"
+              className="btn-apple btn-orange"
+              onClick={onTriggerReport}
+              style={{ boxShadow: "0 8px 24px rgba(234, 88, 12, 0.35)" }}
+            >
+              <i className="ri-shield-user-line"></i> Terbitkan Laporan Pos Satpam
+            </button>
+          </div>
+        </div>
+
+        {/* Security Officer Badge Bar */}
+        <div
+          style={{
+            marginTop: "1.5rem",
+            paddingTop: "1rem",
+            borderTop: "1px solid rgba(255,255,255,0.1)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "0.75rem",
+            fontSize: "0.82rem",
+            color: "#cbd5e1"
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+            <i className="ri-shield-star-fill" style={{ color: "#22c55e", fontSize: "1.1rem" }}></i>
+            <span>
+              Petugas Berwenang: <strong>Komandan Satpam Bambang S. (NIP: 197805122003121002)</strong>
+            </span>
+          </div>
+          <div style={{ display: "flex", gap: "1.25rem", color: "#94a3b8" }}>
+            <span><i className="ri-map-pin-2-line"></i> Posko Utama Gerbang Barat</span>
+            <span><i className="ri-phone-line"></i> Radio Patroli Saluran 10</span>
+          </div>
+        </div>
+      </div>
+
+      {/* 4 Bento Metrics Cards */}
+      <div className="admin-metrics-grid">
+        <div className="admin-metric-card">
+          <div className="admin-metric-header">
+            <span className="admin-metric-label">Total Laporan Terdata</span>
+            <div className="admin-metric-icon" style={{ background: "var(--brand-blue-soft)", color: "var(--brand-primary)" }}>
+              <i className="ri-folder-open-line"></i>
+            </div>
+          </div>
+          <div className="admin-metric-val">{stats.total}</div>
+          <div style={{ fontSize: "0.76rem", color: "var(--ink-400)", marginTop: "0.4rem" }}>
+            Semua catatan aktif &amp; arsip kampus
+          </div>
+        </div>
+
+        <div className="admin-metric-card" style={{ borderLeft: "4px solid var(--lost-red)" }}>
+          <div className="admin-metric-header">
+            <span className="admin-metric-label">Barang Hilang (Pemilik)</span>
+            <div className="admin-metric-icon" style={{ background: "var(--lost-red-soft)", color: "var(--lost-red)" }}>
+              <i className="ri-search-eye-line"></i>
+            </div>
+          </div>
+          <div className="admin-metric-val" style={{ color: "var(--lost-red)" }}>{stats.lost}</div>
+          <div style={{ fontSize: "0.76rem", color: "var(--ink-400)", marginTop: "0.4rem" }}>
+            Laporan kehilangan yang sedang dicari
+          </div>
+        </div>
+
+        <div className="admin-metric-card" style={{ borderLeft: "4px solid var(--found-green)" }}>
+          <div className="admin-metric-header">
+            <span className="admin-metric-label">Barang Temuan (Penemu)</span>
+            <div className="admin-metric-icon" style={{ background: "var(--found-green-soft)", color: "var(--found-green)" }}>
+              <i className="ri-hand-heart-line"></i>
+            </div>
+          </div>
+          <div className="admin-metric-val" style={{ color: "var(--found-green)" }}>{stats.found}</div>
+          <div style={{ fontSize: "0.76rem", color: "var(--ink-400)", marginTop: "0.4rem" }}>
+            Diamankan &amp; menunggu klaim pemilik sah
+          </div>
+        </div>
+
+        <div className="admin-metric-card" style={{ borderLeft: "4px solid var(--resolved-slate)" }}>
+          <div className="admin-metric-header">
+            <span className="admin-metric-label">Kasus Selesai (Resolved)</span>
+            <div className="admin-metric-icon" style={{ background: "var(--bg-subtle)", color: "var(--resolved-slate)" }}>
+              <i className="ri-checkbox-circle-line"></i>
+            </div>
+          </div>
+          <div className="admin-metric-val">{stats.resolved}</div>
+          <div style={{ fontSize: "0.76rem", color: "var(--ink-400)", marginTop: "0.4rem" }}>
+            Barang telah dikembalikan ke pemilik
+          </div>
+        </div>
+      </div>
+
+      {/* Safe Meetup Spot Callout Box */}
+      <div
+        style={{
+          background: "#fff",
+          border: "1.5px solid #bbf7d0",
+          borderRadius: "var(--radius-xl)",
+          padding: "1.25rem 1.6rem",
+          marginBottom: "1.5rem",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+          gap: "1rem",
+          boxShadow: "0 4px 16px rgba(22, 163, 74, 0.08)"
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+          <div
+            style={{
+              width: 48,
+              height: 48,
+              borderRadius: "50%",
+              background: "#dcfce7",
+              color: "#16a34a",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "1.4rem",
+              flexShrink: 0
+            }}
+          >
+            <i className="ri-shield-check-line"></i>
+          </div>
+          <div>
+            <div style={{ fontWeight: 800, fontSize: "0.98rem", color: "#14532d" }}>
+              Posko Mediasi &amp; Safe Meetup Point Resmi Kampus
+            </div>
+            <div style={{ fontSize: "0.84rem", color: "#334155", maxWidth: 650 }}>
+              Setiap serah terima barang berharga diarahkan dilakukan di Pos Satpam Utama. Petugas memverifikasi kecocokan KTM dan ciri rahasia sebelum status diubah menjadi Selesai.
+            </div>
+          </div>
+        </div>
+        <div
+          style={{
+            padding: "0.5rem 0.9rem",
+            background: "#f0fdf4",
+            borderRadius: "var(--radius-pill)",
+            fontSize: "0.8rem",
+            fontWeight: 800,
+            color: "#16a34a",
+            border: "1px solid #86efac"
+          }}
+        >
+          <i className="ri-check-line"></i> Total {stats.totalClaims} Pengajuan Klaim Masuk
+        </div>
+      </div>
+
+      {/* Filter & Live Search Bar */}
+      <div className="admin-filter-bar">
+        <div style={{ display: "flex", alignItems: "center", gap: "0.45rem", flexWrap: "wrap" }}>
+          {[
+            { id: "all", label: `Semua (${stats.total})` },
+            { id: "lost", label: `Barang Hilang (${stats.lost})` },
+            { id: "found", label: `Barang Temuan (${stats.found})` },
+            { id: "resolved", label: `Selesai (${stats.resolved})` }
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setAdminStatusFilter(tab.id)}
+              style={{
+                padding: "0.45rem 0.95rem",
+                borderRadius: "var(--radius-pill)",
+                fontSize: "0.82rem",
+                fontWeight: 700,
+                border: "none",
+                background: adminStatusFilter === tab.id ? "var(--brand-primary)" : "var(--bg-canvas)",
+                color: adminStatusFilter === tab.id ? "#ffffff" : "var(--ink-600)",
+                transition: "all 0.18s ease"
+              }}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", minWidth: 260 }}>
+          <div
+            style={{
+              position: "relative",
+              width: "100%",
+              display: "flex",
+              alignItems: "center"
+            }}
+          >
+            <i className="ri-search-line" style={{ position: "absolute", left: "0.75rem", color: "var(--ink-400)" }}></i>
+            <input
+              type="text"
+              placeholder="Cari judul, pelapor, atau lokasi..."
+              value={adminSearch}
+              onChange={(e) => setAdminSearch(e.target.value)}
+              className="apple-input"
+              style={{ paddingLeft: "2.2rem", fontSize: "0.84rem", padding: "0.5rem 0.85rem 0.5rem 2.2rem" }}
+            />
+            {adminSearch && (
+              <button
+                type="button"
+                onClick={() => setAdminSearch("")}
+                style={{ position: "absolute", right: "0.6rem", color: "var(--ink-400)", fontSize: "1rem" }}
+              >
+                &times;
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Moderation Data Table */}
+      <div className="admin-table-container">
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th>Barang &amp; Foto</th>
+              <th>Status / Tipe</th>
+              <th>Lokasi Kampus</th>
+              <th>Pelapor (Civitas)</th>
+              <th>Ciri Khusus Asli</th>
+              <th style={{ textAlign: "right" }}>Aksi Otoritas Satpam</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredItems.length === 0 ? (
+              <tr>
+                <td colSpan={6} style={{ textAlign: "center", padding: "3rem 1.5rem", color: "var(--ink-400)" }}>
+                  <i className="ri-inbox-line" style={{ fontSize: "2rem", display: "block", marginBottom: "0.5rem" }}></i>
+                  Tidak ada laporan yang cocok dengan filter pencarian.
+                </td>
+              </tr>
+            ) : (
+              filteredItems.map((item) => {
+                const isLost = item.type === "lost";
+                const isResolved = item.status === "resolved";
+
+                return (
+                  <tr key={item.id}>
+                    <td>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
+                        <img
+                          src={item.image || "https://images.unsplash.com/photo-1584438784894-089d6a62b8fa?auto=format&fit=crop&w=150&q=80"}
+                          alt={item.title}
+                          className="admin-table-thumb"
+                          onError={(e) => {
+                            e.target.src = "https://images.unsplash.com/photo-1584438784894-089d6a62b8fa?auto=format&fit=crop&w=150&q=80";
+                          }}
+                        />
+                        <div>
+                          <div style={{ fontWeight: 800, color: "var(--ink-900)", fontSize: "0.92rem", marginBottom: "0.15rem" }}>
+                            {item.title}
+                          </div>
+                          <div style={{ fontSize: "0.75rem", color: "var(--ink-400)", display: "flex", gap: "0.45rem", alignItems: "center" }}>
+                            <span><i className="ri-price-tag-3-line"></i> {item.category}</span>
+                            <span>&bull;</span>
+                            <span><i className="ri-time-line"></i> {item.date}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td>
+                      <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", alignItems: "flex-start" }}>
+                        <span
+                          className={`badge-tag ${isLost ? "tag-lost" : "tag-found"}`}
+                          style={{ fontSize: "0.72rem", padding: "0.2rem 0.55rem" }}
+                        >
+                          {isLost ? "🔴 Kehilangan" : "🟢 Ditemukan"}
+                        </span>
+                        <span
+                          style={{
+                            fontSize: "0.72rem",
+                            fontWeight: 700,
+                            color: isResolved ? "var(--resolved-slate)" : "#16a34a"
+                          }}
+                        >
+                          {isResolved ? "✓ Kasus Selesai" : "● Kasus Aktif"}
+                        </span>
+                      </div>
+                    </td>
+
+                    <td>
+                      <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--ink-800)" }}>
+                        <i className="ri-map-pin-2-line" style={{ color: "var(--brand-primary)", marginRight: "0.3rem" }}></i>
+                        {item.location}
+                      </div>
+                    </td>
+
+                    <td>
+                      <div>
+                        <div style={{ fontWeight: 700, fontSize: "0.86rem", color: "var(--ink-900)" }}>
+                          {item.reporterName}
+                        </div>
+                        <div style={{ fontSize: "0.75rem", color: "var(--ink-400)" }}>
+                          {item.reporterFaculty || "Mahasiswa"}
+                        </div>
+                        <div style={{ fontSize: "0.75rem", color: "var(--ink-600)", marginTop: "0.1rem" }}>
+                          <i className="ri-whatsapp-line" style={{ color: "#16a34a" }}></i> {item.reporterPhone}
+                        </div>
+                      </div>
+                    </td>
+
+                    <td style={{ maxWidth: 220 }}>
+                      <div
+                        style={{
+                          fontSize: "0.78rem",
+                          background: item.type === "found" ? "rgba(22, 163, 74, 0.08)" : "var(--bg-subtle)",
+                          padding: "0.4rem 0.6rem",
+                          borderRadius: "var(--radius-xs)",
+                          color: "var(--ink-800)",
+                          border: "1px dashed var(--border-strong)"
+                        }}
+                        title={item.specificFeatures}
+                      >
+                        <div style={{ fontWeight: 700, fontSize: "0.7rem", color: item.type === "found" ? "#16a34a" : "var(--ink-600)", marginBottom: "0.1rem" }}>
+                          {item.type === "found" ? "🛡️ Ciri Asli (Disensor ke Publik)" : "Ciri Fisik:"}
+                        </div>
+                        <div style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                          {item.specificFeatures || item.description}
+                        </div>
+                      </div>
+                    </td>
+
+                    <td style={{ textAlign: "right" }}>
+                      <div style={{ display: "inline-flex", gap: "0.35rem", alignItems: "center" }}>
+                        <a
+                          href={`https://wa.me/${(item.reporterPhone || "").replace(/^0/, "62").replace(/[^0-9]/g, "")}?text=${encodeURIComponent(
+                            `Halo ${item.reporterName}, kami dari Pos Keamanan Kampus terkait laporan "${item.title}" di Findit.`
+                          )}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="btn-apple btn-sm"
+                          style={{
+                            background: "#dcfce7",
+                            color: "#16a34a",
+                            border: "1px solid #86efac",
+                            padding: "0.4rem 0.65rem",
+                            fontSize: "0.78rem"
+                          }}
+                          title="Hubungi Pelapor via WhatsApp Resmi"
+                        >
+                          <i className="ri-whatsapp-line"></i> WA
+                        </a>
+
+                        <button
+                          type="button"
+                          className="btn-apple btn-glass btn-sm"
+                          onClick={() => onOpenDetail(item)}
+                          style={{ padding: "0.4rem 0.65rem", fontSize: "0.78rem" }}
+                          title="Inspeksi Detail Laporan"
+                        >
+                          <i className="ri-eye-line"></i>
+                        </button>
+
+                        <button
+                          type="button"
+                          className="btn-apple btn-sm"
+                          onClick={() => onToggleResolved(item.id)}
+                          style={{
+                            background: isResolved ? "var(--bg-subtle)" : "var(--found-green)",
+                            color: isResolved ? "var(--ink-600)" : "#ffffff",
+                            padding: "0.4rem 0.65rem",
+                            fontSize: "0.78rem"
+                          }}
+                          title={isResolved ? "Buka Kembali Laporan" : "Verifikasi Serah Terima Selesai"}
+                        >
+                          <i className={isResolved ? "ri-restart-line" : "ri-check-double-line"}></i>
+                        </button>
+
+                        <button
+                          type="button"
+                          className="btn-apple btn-coral-soft btn-sm"
+                          onClick={() => onDeleteItem(item.id)}
+                          style={{ padding: "0.4rem 0.65rem", fontSize: "0.78rem" }}
+                          title="Take-down / Hapus Laporan Spam"
+                        >
+                          <i className="ri-delete-bin-line"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ==========================================================================
    SUB-KOMPONEN MODAL DENGAN ANIMASI SPRING APPLE
    ========================================================================== */
 
-function AuthModal({ mode, setMode, pendingReport, onClose, onSuccess, pushToast }) {
+function AuthModal({ mode, setMode, portalRole, setPortalRole, pendingReport, onClose, onSuccess, pushToast }) {
+  const [currentPortal, setCurrentPortal] = useState(portalRole || "student");
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
@@ -1628,9 +2172,17 @@ function AuthModal({ mode, setMode, pendingReport, onClose, onSuccess, pushToast
   const [regPhone, setRegPhone] = useState("");
   const [regPassword, setRegPassword] = useState("");
 
+  const handlePortalSwitch = (newPortal) => {
+    setCurrentPortal(newPortal);
+    if (setPortalRole) setPortalRole(newPortal);
+    setMode("login");
+    setIdentifier("");
+    setPassword("");
+  };
+
   const handleLogin = (e) => {
     e.preventDefault();
-    const res = AuthService.login(identifier, password);
+    const res = AuthService.login(identifier, password, currentPortal);
     if (res.success) {
       onSuccess(res.user, res.message);
     } else {
@@ -1673,8 +2225,17 @@ function AuthModal({ mode, setMode, pendingReport, onClose, onSuccess, pushToast
       >
         <div className="sheet-header">
           <div className="sheet-header-title">
-            <i className="ri-shield-keyhole-line" style={{ color: "var(--brand-primary)" }}></i>
-            <span>{mode === "login" ? "Masuk ke Akun Kampus" : "Pendaftaran Mahasiswa"}</span>
+            <i
+              className={currentPortal === "admin" ? "ri-shield-keyhole-line" : "ri-graduation-cap-line"}
+              style={{ color: currentPortal === "admin" ? "#16a34a" : "var(--brand-primary)" }}
+            ></i>
+            <span>
+              {currentPortal === "admin"
+                ? "Portal Komando Petugas Keamanan (Satpam)"
+                : mode === "login"
+                ? "Masuk Akun Mahasiswa"
+                : "Pendaftaran Mahasiswa"}
+            </span>
           </div>
           <button type="button" className="btn-circle-close" onClick={onClose}>
             &times;
@@ -1682,7 +2243,7 @@ function AuthModal({ mode, setMode, pendingReport, onClose, onSuccess, pushToast
         </div>
 
         <div className="sheet-body">
-          {pendingReport && (
+          {pendingReport && currentPortal === "student" && (
             <div
               style={{
                 background: "var(--brand-blue-soft)",
@@ -1699,63 +2260,108 @@ function AuthModal({ mode, setMode, pendingReport, onClose, onSuccess, pushToast
             </div>
           )}
 
+          {/* Segmented Role Switcher: Mahasiswa (Pemilik & Penemu) vs Admin Kampus */}
           <div
             style={{
               display: "grid",
               gridTemplateColumns: "1fr 1fr",
+              gap: "0.45rem",
               background: "var(--bg-canvas)",
-              padding: "0.28rem",
-              borderRadius: "var(--radius-pill)",
-              marginBottom: "1.25rem"
+              padding: "0.3rem",
+              borderRadius: "var(--radius-lg)",
+              marginBottom: "1.2rem",
+              border: "1px solid var(--border-hairline)"
             }}
           >
             <button
               type="button"
-              className="btn-apple btn-sm"
+              onClick={() => handlePortalSwitch("student")}
               style={{
-                background: mode === "login" ? "#fff" : "transparent",
-                boxShadow: mode === "login" ? "0 2px 6px rgba(0,0,0,0.08)" : "none"
+                padding: "0.55rem 0.75rem",
+                borderRadius: "var(--radius-md)",
+                fontSize: "0.82rem",
+                fontWeight: 700,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "0.4rem",
+                border: currentPortal === "student" ? "1.5px solid var(--brand-primary)" : "1.5px solid transparent",
+                background: currentPortal === "student" ? "#ffffff" : "transparent",
+                color: currentPortal === "student" ? "var(--brand-primary)" : "var(--ink-600)",
+                boxShadow: currentPortal === "student" ? "0 2px 8px rgba(0,0,0,0.06)" : "none",
+                transition: "all 0.18s ease"
               }}
-              onClick={() => setMode("login")}
             >
-              Masuk (Login)
+              <i className="ri-graduation-cap-line" style={{ fontSize: "1.05rem" }}></i>
+              <span>Mahasiswa (Pemilik / Penemu)</span>
             </button>
+
             <button
               type="button"
-              className="btn-apple btn-sm"
+              onClick={() => handlePortalSwitch("admin")}
               style={{
-                background: mode === "register" ? "#fff" : "transparent",
-                boxShadow: mode === "register" ? "0 2px 6px rgba(0,0,0,0.08)" : "none"
+                padding: "0.55rem 0.75rem",
+                borderRadius: "var(--radius-md)",
+                fontSize: "0.82rem",
+                fontWeight: 700,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "0.4rem",
+                border: currentPortal === "admin" ? "1.5px solid #16a34a" : "1.5px solid transparent",
+                background: currentPortal === "admin" ? "#0f172a" : "transparent",
+                color: currentPortal === "admin" ? "#ffffff" : "var(--ink-600)",
+                boxShadow: currentPortal === "admin" ? "0 4px 12px rgba(15,23,42,0.25)" : "none",
+                transition: "all 0.18s ease"
               }}
-              onClick={() => setMode("register")}
             >
-              Daftar Baru
+              <i className="ri-shield-star-line" style={{ fontSize: "1.05rem", color: currentPortal === "admin" ? "#4ade80" : "inherit" }}></i>
+              <span>Petugas &amp; Admin Kampus</span>
             </button>
           </div>
 
-          {mode === "login" ? (
+          {currentPortal === "admin" ? (
+            /* ================= FORM LOGIN PETUGAS / ADMIN ================= */
             <form className="form-stack" onSubmit={handleLogin}>
+              <div
+                style={{
+                  background: "#0f172a",
+                  color: "#ffffff",
+                  padding: "0.85rem 1rem",
+                  borderRadius: "var(--radius-md)",
+                  border: "1px solid rgba(34, 197, 94, 0.4)",
+                  marginBottom: "0.5rem"
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: "0.45rem", fontWeight: 800, fontSize: "0.86rem", color: "#4ade80" }}>
+                  <i className="ri-shield-keyhole-fill"></i> Safe-Campus Command Center
+                </div>
+                <div style={{ fontSize: "0.76rem", color: "#94a3b8", marginTop: "0.15rem" }}>
+                  Portal otoritas resmi untuk Petugas Satpam, BAAK, dan mediasi serah terima barang di kampus.
+                </div>
+              </div>
+
               <div>
-                <label className="field-label">Email Kampus atau NIM</label>
+                <label className="field-label">NIP Petugas Keamanan / Email Otoritas</label>
                 <input
                   type="text"
                   className="apple-input"
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
-                  placeholder="cth: ahmad.rizky@mahasiswa.ac.id atau 2108561001"
+                  placeholder="cth: 197805122003121002 atau admin.keamanan@kampus.ac.id"
                   required
                 />
               </div>
 
               <div>
-                <label className="field-label">Kata Sandi</label>
+                <label className="field-label">PIN / Kata Sandi Otorisasi</label>
                 <div style={{ position: "relative" }}>
                   <input
                     type={showPass ? "text" : "password"}
                     className="apple-input"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Masukkan kata sandi"
+                    placeholder="Masukkan kata sandi otorisasi"
                     required
                   />
                   <button
@@ -1774,120 +2380,248 @@ function AuthModal({ mode, setMode, pendingReport, onClose, onSuccess, pushToast
                 </div>
               </div>
 
-              <button type="submit" className="btn-apple btn-blue btn-lg">
-                <i className="ri-login-circle-line"></i> Masuk Sekarang
+              <button
+                type="submit"
+                className="btn-apple btn-lg"
+                style={{
+                  background: "linear-gradient(135deg, #0f172a 0%, #166534 100%)",
+                  color: "#ffffff",
+                  boxShadow: "0 6px 20px rgba(22, 101, 52, 0.35)",
+                  border: "1px solid rgba(74, 222, 128, 0.4)"
+                }}
+              >
+                <i className="ri-shield-check-line" style={{ color: "#4ade80" }}></i> Masuk Pusat Kendali Admin
               </button>
 
-              {/* Demo Accounts */}
+              {/* Demo Admin 1-Click Button */}
               <div
                 style={{
                   background: "var(--bg-canvas)",
-                  padding: "0.9rem",
+                  padding: "0.85rem",
                   borderRadius: "var(--radius-md)",
-                  marginTop: "0.4rem"
+                  border: "1px solid var(--border-hairline)",
+                  marginTop: "0.3rem"
                 }}
               >
-                <div style={{ fontSize: "0.76rem", fontWeight: 800, marginBottom: "0.45rem" }}>
-                  <i className="ri-sparkling-line" style={{ color: "var(--brand-primary)" }}></i>{" "}
-                  Akun Demo Klik Cepat:
+                <div style={{ fontSize: "0.75rem", fontWeight: 800, marginBottom: "0.4rem", color: "var(--ink-800)" }}>
+                  <i className="ri-shield-user-line" style={{ color: "#16a34a" }}></i> Akun Demo Petugas Resmi (Klik Cepat):
                 </div>
-                <div style={{ display: "flex", gap: "0.45rem", flexWrap: "wrap" }}>
-                  {[
-                    { label: "Ahmad (Fasilkom)", email: "ahmad.rizky@mahasiswa.ac.id" },
-                    { label: "Nabila (FEB)", email: "nabila.putri@mahasiswa.ac.id" },
-                    { label: "Fajar (Teknik)", email: "fajar.satria@mahasiswa.ac.id" }
-                  ].map((acc) => (
-                    <button
-                      key={acc.email}
-                      type="button"
-                      className="btn-apple btn-glass btn-sm"
-                      onClick={() => {
-                        setIdentifier(acc.email);
-                        setPassword("password123");
-                      }}
-                    >
-                      {acc.label}
-                    </button>
-                  ))}
-                </div>
+                <button
+                  type="button"
+                  className="btn-apple btn-sm"
+                  style={{
+                    width: "100%",
+                    justifyContent: "flex-start",
+                    background: "#0f172a",
+                    color: "#ffffff",
+                    border: "1px solid rgba(34, 197, 94, 0.4)",
+                    padding: "0.55rem 0.85rem",
+                    fontSize: "0.82rem"
+                  }}
+                  onClick={() => {
+                    setIdentifier("197805122003121002");
+                    setPassword("adminsecurity");
+                  }}
+                >
+                  <i className="ri-shield-star-fill" style={{ color: "#4ade80" }}></i>
+                  <span>Komandan Satpam Bambang S. (NIP: 197805122003121002)</span>
+                </button>
               </div>
             </form>
           ) : (
-            <form className="form-stack" onSubmit={handleRegister}>
-              <div>
-                <label className="field-label">Nama Lengkap Mahasiswa</label>
-                <input
-                  type="text"
-                  className="apple-input"
-                  value={regName}
-                  onChange={(e) => setRegName(e.target.value)}
-                  placeholder="cth: Muhammad Budi Santoso"
-                  required
-                />
+            /* ================= PORTAL MAHASISWA (PEMILIK & PENEMU) ================= */
+            <>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  background: "var(--bg-canvas)",
+                  padding: "0.28rem",
+                  borderRadius: "var(--radius-pill)",
+                  marginBottom: "1.25rem"
+                }}
+              >
+                <button
+                  type="button"
+                  className="btn-apple btn-sm"
+                  style={{
+                    background: mode === "login" ? "#fff" : "transparent",
+                    boxShadow: mode === "login" ? "0 2px 6px rgba(0,0,0,0.08)" : "none"
+                  }}
+                  onClick={() => setMode("login")}
+                >
+                  Masuk (Login)
+                </button>
+                <button
+                  type="button"
+                  className="btn-apple btn-sm"
+                  style={{
+                    background: mode === "register" ? "#fff" : "transparent",
+                    boxShadow: mode === "register" ? "0 2px 6px rgba(0,0,0,0.08)" : "none"
+                  }}
+                  onClick={() => setMode("register")}
+                >
+                  Daftar Baru
+                </button>
               </div>
-              <div className="form-grid-2">
-                <div>
-                  <label className="field-label">NIM</label>
-                  <input
-                    type="text"
-                    className="apple-input"
-                    value={regNim}
-                    onChange={(e) => setRegNim(e.target.value)}
-                    placeholder="2108561088"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="field-label">Fakultas</label>
-                  <input
-                    type="text"
-                    className="apple-input"
-                    value={regFaculty}
-                    onChange={(e) => setRegFaculty(e.target.value)}
-                    placeholder="Fasilkom / Teknik"
-                    required
-                  />
-                </div>
-              </div>
-              <div className="form-grid-2">
-                <div>
-                  <label className="field-label">Email Kampus</label>
-                  <input
-                    type="email"
-                    className="apple-input"
-                    value={regEmail}
-                    onChange={(e) => setRegEmail(e.target.value)}
-                    placeholder="nama@mahasiswa.ac.id"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="field-label">No. WhatsApp</label>
-                  <input
-                    type="tel"
-                    className="apple-input"
-                    value={regPhone}
-                    onChange={(e) => setRegPhone(e.target.value)}
-                    placeholder="08123456789"
-                    required
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="field-label">Kata Sandi (Min. 6 karakter)</label>
-                <input
-                  type="password"
-                  className="apple-input"
-                  value={regPassword}
-                  onChange={(e) => setRegPassword(e.target.value)}
-                  minLength={6}
-                  required
-                />
-              </div>
-              <button type="submit" className="btn-apple btn-blue btn-lg">
-                <i className="ri-user-add-line"></i> Buat Akun Mahasiswa
-              </button>
-            </form>
+
+              {mode === "login" ? (
+                <form className="form-stack" onSubmit={handleLogin}>
+                  <div>
+                    <label className="field-label">Email Kampus atau NIM</label>
+                    <input
+                      type="text"
+                      className="apple-input"
+                      value={identifier}
+                      onChange={(e) => setIdentifier(e.target.value)}
+                      placeholder="cth: ahmad.rizky@mahasiswa.ac.id atau 2108561001"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="field-label">Kata Sandi</label>
+                    <div style={{ position: "relative" }}>
+                      <input
+                        type={showPass ? "text" : "password"}
+                        className="apple-input"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Masukkan kata sandi"
+                        required
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPass(!showPass)}
+                        style={{
+                          position: "absolute",
+                          right: "0.85rem",
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          color: "var(--ink-400)"
+                        }}
+                      >
+                        <i className={showPass ? "ri-eye-off-line" : "ri-eye-line"}></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <button type="submit" className="btn-apple btn-blue btn-lg">
+                    <i className="ri-login-circle-line"></i> Masuk Sekarang
+                  </button>
+
+                  {/* Demo Accounts */}
+                  <div
+                    style={{
+                      background: "var(--bg-canvas)",
+                      padding: "0.9rem",
+                      borderRadius: "var(--radius-md)",
+                      marginTop: "0.4rem"
+                    }}
+                  >
+                    <div style={{ fontSize: "0.76rem", fontWeight: 800, marginBottom: "0.45rem" }}>
+                      <i className="ri-sparkling-line" style={{ color: "var(--brand-primary)" }}></i>{" "}
+                      Akun Demo Klik Cepat:
+                    </div>
+                    <div style={{ display: "flex", gap: "0.45rem", flexWrap: "wrap" }}>
+                      {[
+                        { label: "Ahmad (Pemilik KTM)", email: "ahmad.rizky@mahasiswa.ac.id" },
+                        { label: "Nabila (Penemu Kunci)", email: "nabila.putri@mahasiswa.ac.id" },
+                        { label: "Fajar (Penemu Tumbler)", email: "fajar.satria@mahasiswa.ac.id" }
+                      ].map((acc) => (
+                        <button
+                          key={acc.email}
+                          type="button"
+                          className="btn-apple btn-glass btn-sm"
+                          onClick={() => {
+                            setIdentifier(acc.email);
+                            setPassword("password123");
+                          }}
+                        >
+                          {acc.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </form>
+              ) : (
+                <form className="form-stack" onSubmit={handleRegister}>
+                  <div>
+                    <label className="field-label">Nama Lengkap Mahasiswa</label>
+                    <input
+                      type="text"
+                      className="apple-input"
+                      value={regName}
+                      onChange={(e) => setRegName(e.target.value)}
+                      placeholder="cth: Muhammad Budi Santoso"
+                      required
+                    />
+                  </div>
+                  <div className="form-grid-2">
+                    <div>
+                      <label className="field-label">NIM</label>
+                      <input
+                        type="text"
+                        className="apple-input"
+                        value={regNim}
+                        onChange={(e) => setRegNim(e.target.value)}
+                        placeholder="2108561088"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="field-label">Fakultas</label>
+                      <input
+                        type="text"
+                        className="apple-input"
+                        value={regFaculty}
+                        onChange={(e) => setRegFaculty(e.target.value)}
+                        placeholder="Fasilkom / Teknik"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="form-grid-2">
+                    <div>
+                      <label className="field-label">Email Kampus</label>
+                      <input
+                        type="email"
+                        className="apple-input"
+                        value={regEmail}
+                        onChange={(e) => setRegEmail(e.target.value)}
+                        placeholder="nama@mahasiswa.ac.id"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="field-label">No. WhatsApp</label>
+                      <input
+                        type="tel"
+                        className="apple-input"
+                        value={regPhone}
+                        onChange={(e) => setRegPhone(e.target.value)}
+                        placeholder="08123456789"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="field-label">Kata Sandi (Min. 6 karakter)</label>
+                    <input
+                      type="password"
+                      className="apple-input"
+                      value={regPassword}
+                      onChange={(e) => setRegPassword(e.target.value)}
+                      minLength={6}
+                      required
+                    />
+                  </div>
+                  <button type="submit" className="btn-apple btn-blue btn-lg">
+                    <i className="ri-user-add-line"></i> Buat Akun Mahasiswa
+                  </button>
+                </form>
+              )}
+            </>
           )}
         </div>
       </motion.div>
